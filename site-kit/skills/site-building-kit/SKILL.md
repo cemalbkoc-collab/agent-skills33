@@ -28,6 +28,16 @@ Not for: editing one component in an existing app (use `frontend-ui-engineering`
    - Company / product / shop site that must not look AI-made: load `design-taste-frontend`.
    - Both may apply: `design-taste-frontend` for system, copy and sections; `scroll-craft` for the
      one or two scroll acts. Do not stack more than two motion ideas per page.
+   - Bold one-off interface, no strong system yet: `frontend-design`. Palette/type theme for an
+     artifact or deck: `theme-factory`. Posters and generative visuals: `canvas-design`,
+     `algorithmic-art`. Multi-file React/Tailwind/shadcn artifact: `web-artifacts-builder`.
+   - Once a page exists, use `impeccable` sub-commands to finish it (`critique`, `audit`,
+     `polish`, `bolder` / `quieter`, `typeset`, `layout`, `animate`, `harden`).
+2b. **Selling pages** (stores, landing pages): write the copy with `copywriting`, tighten with
+   `copy-editing`, structure with `site-architecture`, then `cro`, `offers`, `popups`, `signup`,
+   `marketing-psychology`. Search: `seo-audit`, `ai-seo`, `schema`. Measurement:
+   `conversion-tracking`, `ab-testing`. Retention: `emails`. Positioning context for all of
+   them: `product-marketing` (writes `.agents/product-marketing.md`; do this first).
 3. **Pick the stack** from `references/github-projects.md` (star counts measured 2026-11-15).
    Defaults:
    - Shopify store: Online Store 2.0 theme (Liquid + JSON templates), `Shopify/dawn` as reference,
@@ -39,7 +49,8 @@ Not for: editing one component in an existing app (use `frontend-ui-engineering`
    image tools), cut out with rembg, and keep full-resolution originals for delivery.
 5. **Build** in small steps (`incremental-implementation`). Every motion must have a
    `prefers-reduced-motion` fallback that keeps all content reachable.
-6. **Verify** (do not skip, do not claim untested results):
+6. **Verify** (do not skip, do not claim untested results). `webapp-testing` has a helper that
+   starts a dev server and drives Playwright against it; the steps below are the minimum:
    - Theme Check / linter: 0 errors.
    - Playwright screenshots at 1440x900, 390x844 and with `reducedMotion: 'reduce'`; for scroll
      acts shoot several progress points and read the screenshots yourself.
