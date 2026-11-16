@@ -1,0 +1,40 @@
+{%- comment -%} Kapanış: etiket gibi dizilmiş liste plakası. Geçerli e-posta yazılınca kesik kenar dikişe döner. {%- endcomment -%}
+<section class="pl" aria-labelledby="pl-{{ section.id }}">
+  {%- form 'customer', class: 'pl__plate', id: 'plate-form' -%}
+    {%- assign done = form.posted_successfully? -%}
+    <div class="pl__inner{% if done %} is-sewn{% endif %}" data-scene="plate">
+      <svg class="pl__seam" aria-hidden="true" focusable="false" preserveAspectRatio="none"><rect/></svg>
+      <h2 class="pl__title" id="pl-{{ section.id }}">{{ section.settings.heading }}</h2>
+      <dl class="pl__facts">
+        {%- for block in section.blocks -%}
+          <div {{ block.shopify_attributes }}><dt>{{ block.settings.label }}</dt><dd>{{ block.settings.value }}</dd></div>
+        {%- endfor -%}
+      </dl>
+      <input type="hidden" name="contact[tags]" value="newsletter,drop">
+      {%- if done -%}
+        <p class="pl__done" role="status">{{ section.settings.success }}</p>
+      {%- else -%}
+        <p class="pl__row">
+          <label class="pl__label" for="plate-email-{{ section.id }}">{{ 'newsletter.label' | t }}</label>
+          <input class="pl__input" id="plate-email-{{ section.id }}" type="email" name="contact[email]" autocomplete="email" placeholder="{{ 'newsletter.placeholder' | t }}" required>
+          <button type="submit" class="pl__btn">{{ section.settings.button }}</button>
+        </p>
+        {%- if form.errors -%}<p class="form-note form-note--error" role="alert">{{ form.errors | default_errors }}</p>{%- endif -%}
+      {%- endif -%}
+      <p class="fine">{{ 'newsletter.privacy' | t }}</p>
+    </div>
+  {%- endform -%}
+</section>
+
+{% schema %}
+{
+  "name": "Liste plakası",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Başlık", "default": "Liste" },
+    { "type": "text", "id": "button", "label": "Düğme", "default": "Dik" },
+    { "type": "text", "id": "success", "label": "Kayıt sonrası", "default": "Dikiş atıldı. Bir sonraki drop'tan bir gün önce yazacağız." }
+  ],
+  "blocks": [ { "type": "fact", "name": "Etiket satırı", "settings": [ { "type": "text", "id": "label", "label": "Etiket", "default": "Sıklık" }, { "type": "text", "id": "value", "label": "Değer", "default": "Ayda en fazla iki e-posta" } ] } ],
+  "presets": [ { "name": "Liste plakası" } ]
+}
+{% endschema %}

@@ -1,0 +1,48 @@
+<section class="split{% if section.settings.flip %} split--flip{% endif %}{% if section.settings.image == blank %} split--text{% endif %}" aria-labelledby="iwt-{{ section.id }}">
+  {%- if section.settings.image != blank -%}
+    <div class="split__media">
+      <img src="{{ section.settings.image | image_url: width: 1100 }}" srcset="{{ section.settings.image | image_url: width: 700 }} 700w, {{ section.settings.image | image_url: width: 1100 }} 1100w, {{ section.settings.image | image_url: width: 1600 }} 1600w" sizes="(min-width: 990px) 50vw, 100vw" width="{{ section.settings.image.width }}" height="{{ section.settings.image.height }}" loading="lazy" alt="{{ section.settings.image.alt | escape }}">
+    </div>
+  {%- endif -%}
+  <div class="split__text" data-reveal>
+    <h2 class="h2" id="iwt-{{ section.id }}">{{ section.settings.heading | newline_to_br }}</h2>
+    {%- if section.settings.text != blank -%}
+      <div class="rte muted">{{ section.settings.text }}</div>
+    {%- endif -%}
+    {%- if section.blocks.size > 0 -%}
+      <ul class="split__products" role="list">
+        {%- for block in section.blocks -%}
+          {%- assign product = block.settings.product -%}
+          {%- if product != blank -%}
+            <li {{ block.shopify_attributes }}>
+              <a href="{{ product.url }}">{{ product.title }}</a>
+              <span>{{ product.price | money }}</span>
+            </li>
+          {%- endif -%}
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+    {%- if section.settings.button_label != blank -%}
+      <a class="link-stitch" href="{{ section.settings.button_link | default: routes.all_products_collection_url }}">{{ section.settings.button_label }}{% render 'icon', name: 'arrow' %}</a>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Görsel ve yazı",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Görsel" },
+    { "type": "checkbox", "id": "flip", "label": "Görseli sağa al", "default": false },
+    { "type": "textarea", "id": "heading", "label": "Başlık", "default": "Gümüş, sade,\nher güne." },
+    { "type": "richtext", "id": "text", "label": "Metin", "default": "<p>Yüzük ölçünü bilmiyorsan sorun değil. Ürün sayfasındaki ölçü rehberi bir iple iki dakikada buldurur.</p>" },
+    { "type": "text", "id": "button_label", "label": "Bağlantı yazısı", "default": "Takıları gör" },
+    { "type": "url", "id": "button_link", "label": "Bağlantı" }
+  ],
+  "blocks": [
+    { "type": "product", "name": "Ürün satırı", "settings": [ { "type": "product", "id": "product", "label": "Ürün" } ] }
+  ],
+  "max_blocks": 4,
+  "presets": [ { "name": "Görsel ve yazı" } ]
+}
+{% endschema %}

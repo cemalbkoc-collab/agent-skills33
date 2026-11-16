@@ -1,0 +1,87 @@
+{%- comment -%}
+  Askı: koleksiyon yürüyüşü. Her parça aynı etiket şemasıyla gelir (Ad, Malzeme, Beden, Fiyat).
+  İmza hareket teyel-scenes.js içinde: iğne ipliği parçalardan geçirir, sonunda dikiş kapanır.
+{%- endcomment -%}
+{%- liquid
+  assign count = section.blocks.size
+  assign span = count | times: 0.6 | plus: 1.5
+-%}
+<section class="rk" data-scene="rack" data-sc-act="pan" data-sc-span="{{ span }}" aria-labelledby="rk-{{ section.id }}">
+  <div class="rk__stage" data-sc-stage>
+    <nav class="rk__index" aria-label="{{ 'rack.index' | t }}">
+      <ol>
+        {%- for block in section.blocks -%}
+          {%- assign product = block.settings.product -%}
+          <li><a href="{{ product.url | default: '#' }}" data-rack-jump>{{ product.title | default: block.settings.title }}</a></li>
+        {%- endfor -%}
+      </ol>
+    </nav>
+    <div class="rk__rail" data-sc-pan="0">
+      <div class="rk__intro" data-rack-intro>
+        <h2 class="rk__heading" id="rk-{{ section.id }}">{{ section.settings.heading }}</h2>
+        <p class="rk__lede">{{ section.settings.text }}</p>
+      </div>
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign product = block.settings.product
+          assign img = block.settings.cutout | default: product.featured_media
+          assign sizes = product.options_by_name['Beden'].values
+        -%}
+        <article class="rk__item{% if block.settings.cutout != blank %} rk__item--cut{% endif %}" data-rack-item style="--i: {{ forloop.index0 }}" {{ block.shopify_attributes }}>
+          <a class="rk__media" href="{{ product.url }}" data-rack-media tabindex="-1" aria-hidden="true">
+            {%- if img != blank -%}
+              <img src="{{ img | image_url: width: 900 }}" srcset="{{ img | image_url: width: 500 }} 500w, {{ img | image_url: width: 900 }} 900w" sizes="(max-width: 749px) 70vw, 30vw" width="{{ img.width | default: 1000 }}" height="{{ img.height | default: 1000 }}" loading="lazy" alt="">
+            {%- else -%}
+              {{ 'product-1' | placeholder_svg_tag: 'rk__placeholder' }}
+            {%- endif -%}
+          </a>
+          <dl class="rk__label">
+            <div class="rk__name"><dt class="visually-hidden">{{ 'rack.name' | t }}</dt><dd><a href="{{ product.url }}">{{ product.title | default: block.settings.title }}</a></dd></div>
+            <div><dt>{{ 'rack.material' | t }}</dt><dd>{{ product.metafields.custom.material.value | split: ',' | first | default: '-' }}</dd></div>
+            {%- if sizes.size > 0 -%}
+              <div><dt>{{ 'rack.size' | t }}</dt><dd>{% if sizes.size > 1 %}{{ sizes.first }} / {{ sizes.last }}{% else %}{{ sizes.first }}{% endif %}</dd></div>
+            {%- endif -%}
+            <div><dt>{{ 'rack.price' | t }}</dt><dd>{% if product.compare_at_price > product.price %}<s>{{ product.compare_at_price | money }}</s> {% endif %}{{ product.price | money }}</dd></div>
+          </dl>
+        </article>
+      {%- endfor -%}
+      <div class="rk__end" data-rack-end>
+        <p class="rk__end-note">{{ section.settings.end_text }}</p>
+        {%- if section.settings.collection != blank -%}
+          <a class="link-stitch" href="{{ section.settings.collection.url }}">{{ 'rack.all' | t: count: section.settings.collection.products_count }}{% render 'icon', name: 'arrow' %}</a>
+        {%- endif -%}
+      </div>
+      <svg class="rk__thread rk__thread--back" data-thread-back aria-hidden="true" focusable="false"></svg>
+      <svg class="rk__thread rk__thread--front" data-thread-front aria-hidden="true" focusable="false"></svg>
+      {%- if section.settings.needle != blank -%}
+        <img class="rk__needle" data-needle src="{{ section.settings.needle | image_url: width: 400 }}" width="200" height="{{ 200 | divided_by: section.settings.needle.aspect_ratio | round }}" alt="" aria-hidden="true">
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Askı",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Başlık", "default": "Askıda" },
+    { "type": "textarea", "id": "text", "label": "Kısa metin", "default": "Bu ay atölyeden çıkan parçalar. Her etikette kumaş, beden aralığı ve fiyat var." },
+    { "type": "text", "id": "end_text", "label": "Askının sonundaki not", "default": "Önce teyel, sonra dikiş." },
+    { "type": "collection", "id": "collection", "label": "Tümünü gör koleksiyonu" },
+    { "type": "image_picker", "id": "needle", "label": "İğne görseli (şeffaf PNG)" }
+  ],
+  "blocks": [
+    {
+      "type": "piece",
+      "name": "Parça",
+      "settings": [
+        { "type": "product", "id": "product", "label": "Ürün" },
+        { "type": "image_picker", "id": "cutout", "label": "Kesik görsel (şeffaf PNG)", "info": "Boş bırakılırsa ürünün ilk görseli kullanılır. Kesik görselde iplik parçanın arkasından geçer." },
+        { "type": "text", "id": "title", "label": "Ürün yoksa ad" }
+      ]
+    }
+  ],
+  "max_blocks": 12,
+  "presets": [ { "name": "Askı", "blocks": [ { "type": "piece" }, { "type": "piece" }, { "type": "piece" }, { "type": "piece" } ] } ]
+}
+{% endschema %}

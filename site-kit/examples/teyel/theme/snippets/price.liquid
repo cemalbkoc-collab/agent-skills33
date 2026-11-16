@@ -1,0 +1,28 @@
+{%- comment -%}
+  Fiyat. Parametreler: product (zorunlu), variant (isteğe bağlı), show_installments (isteğe bağlı)
+{%- endcomment -%}
+{%- liquid
+  assign target = variant | default: product
+  assign price = target.price
+  assign compare = target.compare_at_price
+-%}
+<div class="price{% if compare > price %} price--sale{% endif %}" data-price>
+  {%- if compare > price -%}
+    <span class="visually-hidden">{{ 'product.regular_price' | t }}</span>
+    <s class="price__compare">{{ compare | money }}</s>
+    <span class="visually-hidden">{{ 'product.sale_price' | t }}</span>
+  {%- endif -%}
+  <span class="price__now">
+    {%- if variant == blank and product.price_varies -%}
+      {{ 'product.from_price' | t: price: '' }}
+    {%- endif -%}
+    {{ price | money }}
+  </span>
+</div>
+{%- if show_installments and settings.installment_count > 1 -%}
+  {%- assign installment = price | divided_by: settings.installment_count -%}
+  <p class="price__installment" data-installment>
+    {{ 'product.installments' | t: count: settings.installment_count, amount: '' }}
+    <span data-installment-amount data-count="{{ settings.installment_count }}">{{ installment | money }}</span>
+  </p>
+{%- endif -%}

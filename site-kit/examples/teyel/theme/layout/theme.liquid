@@ -1,0 +1,102 @@
+<!doctype html>
+<html class="no-js" lang="{{ request.locale.iso_code }}">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="theme-color" content="{{ settings.color_background }}">
+    <link rel="canonical" href="{{ canonical_url }}">
+    {%- if settings.favicon != blank -%}
+      <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
+    {%- endif -%}
+    <title>
+      {{ page_title }}
+      {%- if current_tags %} &ndash; {{ current_tags | join: ', ' }}{% endif -%}
+      {%- if current_page != 1 %} &ndash; {{ 'general.page' | t: page: current_page }}{% endif -%}
+      {%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
+    </title>
+    {%- if page_description -%}
+      <meta name="description" content="{{ page_description | escape }}">
+    {%- endif -%}
+    {% render 'meta-tags' %}
+
+    {{ 'hanken-latin.woff2' | asset_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: 'anonymous' }}
+    {%- style -%}
+      @font-face { font-family: "Hanken Grotesk"; font-style: normal; font-weight: 300 700; font-display: swap; src: url("{{ 'hanken-latin.woff2' | asset_url }}") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+      @font-face { font-family: "Hanken Grotesk"; font-style: normal; font-weight: 300 700; font-display: swap; src: url("{{ 'hanken-latin-ext.woff2' | asset_url }}") format("woff2"); unicode-range: U+0100-02AF, U+1E00-1EFF, U+20A0-20C0; }
+      @font-face { font-family: "JetBrains Mono"; font-style: normal; font-weight: 400; font-display: swap; src: url("{{ 'jbmono-latin.woff2' | asset_url }}") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+2000-206F, U+20AC, U+2212; }
+      @font-face { font-family: "JetBrains Mono"; font-style: normal; font-weight: 400; font-display: swap; src: url("{{ 'jbmono-latin-ext.woff2' | asset_url }}") format("woff2"); unicode-range: U+0100-02AF, U+1E00-1EFF, U+20A0-20C0; }
+      :root {
+        --paper: {{ settings.color_background }};
+        --tulle: {{ settings.color_surface }};
+        --ink: {{ settings.color_text }};
+        --lead: {{ settings.color_muted }};
+        --line: {{ settings.color_line }};
+        --cobalt: {{ settings.color_accent }};
+        --on-cobalt: {{ settings.color_on_accent }};
+        --drop-bg: {{ settings.color_drop_background }};
+        --drop-fg: {{ settings.color_drop_text }};
+        --page-max: {{ settings.page_width }}px;
+      }
+    {%- endstyle -%}
+    {%- liquid
+      assign scene_page = false
+      if template.name == 'index' or template.suffix == 'drop'
+        assign scene_page = true
+      endif
+    -%}
+    {%- if scene_page -%}
+      {{ 'scrollcraft.css' | asset_url | stylesheet_tag }}
+    {%- endif -%}
+    {{ 'base.css' | asset_url | stylesheet_tag }}
+    {%- if scene_page -%}
+      {{ 'scenes.css' | asset_url | stylesheet_tag }}
+      <script src="{{ 'scrollcraft.js' | asset_url }}" defer></script>
+      <script src="{{ 'teyel-scenes.js' | asset_url }}" defer></script>
+    {%- endif -%}
+
+    <script>
+      document.documentElement.className = document.documentElement.className.replace('no-js', 'js');
+      window.theme = {
+        routes: {
+          cart_add: {{ routes.cart_add_url | append: '.js' | json }},
+          cart_change: {{ routes.cart_change_url | append: '.js' | json }},
+          cart: {{ routes.cart_url | json }},
+          search: {{ routes.search_url | json }},
+          predictive: {{ routes.predictive_search_url | json }},
+          recommendations: {{ routes.product_recommendations_url | json }},
+          root: {{ routes.root_url | json }}
+        },
+        strings: {
+          added: {{ 'cart.added' | t | json }},
+          error: {{ 'general.error' | t | json }},
+          wishlist_add: {{ 'product.add_wishlist' | t | json }},
+          wishlist_remove: {{ 'product.remove_wishlist' | t | json }},
+          size_result: {{ 'size_guide.result' | t: size: '[size]' | json }},
+          size_none: {{ 'size_guide.no_result' | t | json }}
+        },
+        moneyFormat: {{ shop.money_format | json }}
+      };
+    </script>
+    <script src="{{ 'theme.js' | asset_url }}" defer></script>
+    {{ content_for_header }}
+  </head>
+
+  <body class="template-{{ template.name | handle }}{% if settings.enable_reveal %} has-reveal{% endif %}{% if scene_page %} sc-page{% endif %}">
+    <a class="skip-link" href="#icerik">{{ 'general.skip_to_content' | t }}</a>
+    {% sections 'header-group' %}
+    <main id="icerik" tabindex="-1">
+      {{ content_for_layout }}
+    </main>
+    {% sections 'footer-group' %}
+    {% section 'cart-drawer' %}
+    {% render 'quick-view-dialog' %}
+    {%- if settings.cookie_enable -%}
+      {% render 'cookie-banner' %}
+    {%- endif -%}
+    {%- if settings.popup_enable -%}
+      {% render 'newsletter-popup' %}
+    {%- endif -%}
+    <div class="toast" role="status" aria-live="polite" hidden></div>
+  </body>
+</html>

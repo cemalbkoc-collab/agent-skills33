@@ -1,0 +1,86 @@
+{%- liquid
+  assign threshold = settings.free_shipping_threshold | times: 100
+  assign remaining = threshold | minus: cart.total_price
+  assign progress = 100
+  if threshold > 0 and remaining > 0
+    assign progress = cart.total_price | times: 100 | divided_by: threshold
+  endif
+-%}
+<dialog class="drawer drawer--right" id="cart-drawer" aria-labelledby="cart-drawer-title" data-cart-drawer>
+  <div class="drawer__head">
+    <h2 class="label" id="cart-drawer-title">{{ 'cart.title' | t }} <span data-cart-count-text>({{ cart.item_count }})</span></h2>
+    <button type="button" class="drawer__close" data-dialog-close aria-label="{{ 'general.close' | t }}">{% render 'icon', name: 'close' %}</button>
+  </div>
+
+  <div class="drawer__body" data-cart-contents>
+    {%- if threshold > 0 -%}
+      <div class="shipbar">
+        <p class="shipbar__text">
+          {%- if remaining > 0 -%}
+            {{ 'cart.free_shipping_remaining_html' | t: amount: '' }}<strong>{{ remaining | money }}</strong>
+          {%- else -%}
+            {{ 'cart.free_shipping_reached' | t }}
+          {%- endif -%}
+        </p>
+        <div class="shipbar__track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ progress }}" aria-label="{{ 'cart.free_shipping_progress' | t }}">
+          <span class="shipbar__fill" style="width: {{ progress }}%"></span>
+        </div>
+      </div>
+    {%- endif -%}
+
+    {%- if cart.item_count == 0 -%}
+      <div class="cart-empty">
+        <p class="h3">{{ 'cart.empty' | t }}</p>
+        <a class="link-stitch" href="{{ routes.all_products_collection_url }}">{{ 'cart.empty_cta' | t }}</a>
+      </div>
+    {%- else -%}
+      <ul class="cart-lines" role="list">
+        {%- for item in cart.items -%}
+          <li class="cart-line" data-line="{{ forloop.index }}">
+            <a class="cart-line__media" href="{{ item.url }}" tabindex="-1" aria-hidden="true">
+              {%- if item.image -%}
+                <img src="{{ item.image | image_url: width: 240 }}" width="120" height="120" loading="lazy" alt="">
+              {%- endif -%}
+            </a>
+            <div class="cart-line__info">
+              <a class="cart-line__title" href="{{ item.url }}">{{ item.product.title }}</a>
+              {%- unless item.product.has_only_default_variant -%}
+                <p class="cart-line__variant">{{ item.variant.title }}</p>
+              {%- endunless -%}
+              <div class="cart-line__row">
+                <div class="qty">
+                  <button type="button" class="qty__btn" data-qty-change="{{ item.quantity | minus: 1 }}" aria-label="{{ 'cart.decrease' | t }}: {{ item.product.title | escape }}">{% render 'icon', name: 'minus' %}</button>
+                  <span class="qty__value" aria-live="polite"><span class="visually-hidden">{{ 'cart.quantity' | t }}: </span>{{ item.quantity }}</span>
+                  <button type="button" class="qty__btn" data-qty-change="{{ item.quantity | plus: 1 }}" aria-label="{{ 'cart.increase' | t }}: {{ item.product.title | escape }}">{% render 'icon', name: 'plus' %}</button>
+                </div>
+                <span class="cart-line__price">{{ item.final_line_price | money }}</span>
+              </div>
+              <button type="button" class="cart-line__remove" data-qty-change="0">{{ 'cart.remove' | t }}</button>
+            </div>
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+  </div>
+
+  {%- if cart.item_count > 0 -%}
+    <div class="drawer__foot" data-cart-footer>
+      <div class="cart-total">
+        <span>{{ 'cart.subtotal' | t }}</span>
+        <strong>{{ cart.total_price | money }}</strong>
+      </div>
+      <p class="fine">{{ 'cart.shipping_note' | t }}</p>
+      <form action="{{ routes.cart_url }}" method="post" class="cart-actions">
+        <button type="submit" name="checkout" class="btn-solid">{{ 'cart.checkout' | t }}</button>
+        <a href="{{ routes.cart_url }}" class="link-stitch">{{ 'cart.view_cart' | t }}</a>
+      </form>
+    </div>
+  {%- endif -%}
+</dialog>
+
+{% schema %}
+{
+  "name": "Yan panel sepet",
+  "settings": []
+}
+{% endschema %}

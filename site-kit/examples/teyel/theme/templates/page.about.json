@@ -1,0 +1,29 @@
+{
+  "sections": {
+    "hero": {
+      "type": "hero",
+      "settings": { "kicker": "Atölye", "heading": "Önce teyel,\nsonra dikiş.", "text": "Üç kişilik bir kalıp atölyesinden çıkan giyim, ayakkabı ve takı.", "button_label": "", "text_position": "left" }
+    },
+    "main": { "type": "main-page", "settings": { "narrow": true, "kicker": "Hikâyemiz" } },
+    "process": {
+      "type": "image-with-text",
+      "settings": {
+        "heading": "Teyel ne demek?",
+        "text": "<p>Teyel, terzinin kalıcı dikişten önce attığı geçici dikiştir. Parçayı birleştirir ama bağlamaz; prova yapılır, düzeltilir, ancak ondan sonra dikilir.</p><p>Biz her yeni modeli böyle yaparız. Kalıp kâğıdından numuneye, numuneden üç ayrı bedende provaya. Ancak oturduğuna emin olduğumuzda üretime geçeriz.</p>",
+        "button_label": "Koleksiyonu gör",
+        "button_link": "shopify://collections/kis-26"
+      }
+    },
+    "services": {
+      "type": "service-strip",
+      "blocks": {
+        "s1": { "type": "item", "settings": { "icon": "needle", "title": "Az model", "text": "Sezonda en fazla 40 parça. Her biri kendi kalıbıyla." } },
+        "s2": { "type": "item", "settings": { "icon": "ruler", "title": "Üç beden prova", "text": "Her model S, M ve L'de giyilip düzeltilir." } },
+        "s3": { "type": "item", "settings": { "icon": "return", "title": "Uzun ömür", "text": "Yıkadıkça yumuşayan, formunu bırakmayan kumaşlar." } }
+      },
+      "block_order": ["s1", "s2", "s3"],
+      "settings": { "label": "Nasıl çalışıyoruz" }
+    }
+  },
+  "order": ["hero", "main", "process", "services"]
+}

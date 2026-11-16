@@ -1,0 +1,25 @@
+{
+  "sections": {
+    "main": {
+      "type": "faq",
+      "blocks": {
+        "g1": { "type": "group", "settings": { "title": "Sipariş ve kargo" } },
+        "q1": { "type": "question", "settings": { "question": "Siparişim ne zaman kargoya verilir?", "answer": "<p>Hafta içi saat 14.00'e kadar verilen siparişler aynı gün, sonrakiler ertesi iş günü kargoya verilir. Drop ürünleri drop gününü takip eden 3 iş günü içinde çıkar.</p>" } },
+        "q2": { "type": "question", "settings": { "question": "Hangi kargo firmasıyla gönderiyorsunuz?", "answer": "<p>Yurtiçi Kargo ve HepsiJET ile çalışıyoruz. Kargoya verildiğinde takip numarası e-posta ve SMS ile gelir.</p>" } },
+        "q3": { "type": "question", "settings": { "question": "Kargo ücreti ne kadar?", "answer": "<p>1.500 TL ve üzeri siparişlerde kargo ücretsiz. Altındaki siparişlerde sabit 89,90 TL.</p>" } },
+        "g2": { "type": "group", "settings": { "title": "Ödeme" } },
+        "q4": { "type": "question", "settings": { "question": "Taksit yapabiliyor muyum?", "answer": "<p>Tüm kredi kartlarına 3 taksit, anlaşmalı kartlara 9 taksite kadar seçenek ödeme adımında görünür.</p>" } },
+        "q5": { "type": "question", "settings": { "question": "Kapıda ödeme var mı?", "answer": "<p>Var. Nakit ya da kartla kapıda ödeme için 39,90 TL hizmet bedeli eklenir. Drop ürünlerinde kapıda ödeme kapalıdır.</p>" } },
+        "g3": { "type": "group", "settings": { "title": "İade ve değişim" } },
+        "q6": { "type": "question", "settings": { "question": "İade süresi kaç gün?", "answer": "<p>Teslim aldığın günden itibaren 14 gün. Ürün kullanılmamış, etiketi sökülmemiş olmalı. Hijyen nedeniyle küpe iadesi alınmaz.</p>" } },
+        "q7": { "type": "question", "settings": { "question": "Beden değişimi nasıl yapılır?", "answer": "<p>Hesabım sayfasından iade talebi oluştur, \"değişim\" seç. Yeni beden stoktaysa ilk değişim kargosu bizden.</p>" } },
+        "g4": { "type": "group", "settings": { "title": "Beden ve bakım" } },
+        "q8": { "type": "question", "settings": { "question": "Bedenimi nasıl bulurum?", "answer": "<p>Her ürün sayfasında \"Beden rehberi\"ne dokun. Boy, kilo ya da ölçünü yazınca sana uygun bedeni önerir. İki beden arasındaysan kalıp açıklamasına bak.</p>" } },
+        "q9": { "type": "question", "settings": { "question": "Gümüş takılar kararır mı?", "answer": "<p>925 ayar gümüş zamanla havayla tepkimeye girip koyulaşabilir. Kuru bezle silmek parlaklığı geri getirir. Parfüm ve denizden uzak tut.</p>" } }
+      },
+      "block_order": ["g1", "q1", "q2", "q3", "g2", "q4", "q5", "g3", "q6", "q7", "g4", "q8", "q9"],
+      "settings": { "heading": "Sık sorulan sorular", "text": "<p>Burada bulamadığın bir şey varsa <a href=\"/pages/iletisim\">bize yaz</a>.</p>" }
+    }
+  },
+  "order": ["main"]
+}

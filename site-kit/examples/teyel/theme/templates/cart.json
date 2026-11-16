@@ -1,0 +1,1 @@
+{ "sections": { "main": { "type": "main-cart", "settings": {} }, "recent": { "type": "recently-viewed", "settings": {} } }, "order": ["main", "recent"] }

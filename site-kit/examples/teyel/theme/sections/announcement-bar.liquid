@@ -1,0 +1,39 @@
+{%- if section.blocks.size > 0 -%}
+  <div class="announce" role="region" aria-label="{{ 'general.announcement' | t }}">
+    <ul class="announce__list" role="list">
+      {%- for block in section.blocks -%}
+        <li class="announce__item" {{ block.shopify_attributes }}>
+          {%- if block.settings.link != blank -%}
+            <a href="{{ block.settings.link }}">{{ block.settings.text | escape }}</a>
+          {%- else -%}
+            {{ block.settings.text | escape }}
+          {%- endif -%}
+        </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Duyuru bandı",
+  "max_blocks": 4,
+  "blocks": [
+    {
+      "type": "message",
+      "name": "Duyuru",
+      "settings": [
+        { "type": "text", "id": "text", "label": "Metin", "default": "1.500 TL üzeri kargo bedava" },
+        { "type": "url", "id": "link", "label": "Bağlantı" }
+      ]
+    }
+  ],
+  "default": {
+    "blocks": [
+      { "type": "message", "settings": { "text": "1.500 TL üzeri kargo bedava" } },
+      { "type": "message", "settings": { "text": "9 taksit" } },
+      { "type": "message", "settings": { "text": "14 gün iade" } }
+    ]
+  }
+}
+{% endschema %}

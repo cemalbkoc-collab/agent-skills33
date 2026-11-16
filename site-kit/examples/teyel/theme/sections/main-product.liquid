@@ -1,0 +1,260 @@
+{%- liquid
+  assign current = product.selected_or_first_available_variant
+  assign threshold = settings.low_stock_threshold
+  assign form_id = 'product-form-' | append: section.id
+-%}
+<section class="product page" data-product data-section="{{ section.id }}" data-url="{{ product.url }}" data-handle="{{ product.handle }}" data-low="{{ threshold }}">
+  <div class="product__gallery" data-gallery>
+    <div class="gallery-stage">
+      {%- for media in product.media -%}
+        <div class="gallery-stage__item{% if media.id == current.featured_media.id or forloop.first and current.featured_media == blank %} is-active{% endif %}" data-media="{{ media.id }}">
+          <img
+            src="{{ media | image_url: width: 1200 }}"
+            srcset="{{ media | image_url: width: 600 }} 600w, {{ media | image_url: width: 900 }} 900w, {{ media | image_url: width: 1200 }} 1200w, {{ media | image_url: width: 1800 }} 1800w"
+            sizes="(min-width: 990px) 55vw, 100vw"
+            width="{{ media.width | default: 1000 }}"
+            height="{{ media.height | default: 1000 }}"
+            loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+            {% if forloop.first %}fetchpriority="high"{% endif %}
+            alt="{{ media.alt | default: product.title | escape }}"
+          >
+        </div>
+      {%- else -%}
+        <div class="gallery-stage__item is-active">{{ 'product-1' | placeholder_svg_tag: 'card__img--placeholder' }}</div>
+      {%- endfor -%}
+    </div>
+    {%- if product.media.size > 1 -%}
+      <ul class="gallery-thumbs" role="list">
+        {%- for media in product.media -%}
+          <li>
+            <button type="button" class="gallery-thumbs__btn" data-media-thumb="{{ media.id }}" aria-label="{{ 'product.show_image' | t: index: forloop.index }}">
+              <img src="{{ media | image_url: width: 160 }}" width="80" height="80" loading="lazy" alt="">
+            </button>
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+  </div>
+
+  <div class="product__info">
+    {%- for block in section.blocks -%}
+      {%- case block.type -%}
+        {%- when '@app' -%}
+          {% render block %}
+        {%- when 'title' -%}
+          <div class="product__head" {{ block.shopify_attributes }}>
+            <p class="label">{{ product.type }}{% if product.vendor != shop.name and block.settings.show_vendor %} · {{ product.vendor }}{% endif %}</p>
+            <h1 class="product__title">{{ product.title }}</h1>
+            {%- if product.metafields.reviews.rating.value != blank -%}
+              <p class="product__rating">{% render 'icon', name: 'star' %}{{ product.metafields.reviews.rating.value.rating | round: 1 }} <span class="muted">({{ 'product.reviews_count' | t: count: product.metafields.reviews.rating_count.value }})</span></p>
+            {%- endif -%}
+          </div>
+        {%- when 'price' -%}
+          <div class="product__price" {{ block.shopify_attributes }}>
+            {% render 'price', product: product, variant: current, show_installments: block.settings.show_installments %}
+          </div>
+        {%- when 'variant_picker' -%}
+          {%- unless product.has_only_default_variant -%}
+            <div class="picker" data-picker {{ block.shopify_attributes }}>
+              {%- for option in product.options_with_values -%}
+                {%- assign is_color = false -%}
+                {%- if option.name == 'Renk' or option.name == 'Color' -%}{%- assign is_color = true -%}{%- endif -%}
+                <fieldset class="picker__group{% if is_color %} picker__group--color{% endif %}">
+                  <legend class="picker__legend">
+                    <span class="label">{{ option.name }}</span>
+                    <span class="picker__current" data-option-current>{{ option.selected_value }}</span>
+                    {%- unless is_color -%}
+                      {% render 'size-guide', product: product, page: block.settings.size_page %}
+                    {%- endunless -%}
+                  </legend>
+                  <div class="picker__values">
+                    {%- for value in option.values -%}
+                      {%- assign input_id = form_id | append: '-' | append: option.position | append: '-' | append: forloop.index -%}
+                      <input class="picker__input visually-hidden" type="radio" id="{{ input_id }}" name="{{ option.name | escape }}" value="{{ value | escape }}" form="{{ form_id }}" data-option-index="{{ option.position | minus: 1 }}"{% if option.selected_value == value %} checked{% endif %}>
+                      {%- if is_color -%}
+                        <label class="swatch" for="{{ input_id }}" {% render 'swatch', value: value %}><span class="visually-hidden">{{ value }}</span></label>
+                      {%- else -%}
+                        <label class="chip" for="{{ input_id }}">{{ value }}</label>
+                      {%- endif -%}
+                    {%- endfor -%}
+                  </div>
+                </fieldset>
+              {%- endfor -%}
+            </div>
+          {%- endunless -%}
+        {%- when 'buy_buttons' -%}
+          <div class="buy" {{ block.shopify_attributes }}>
+            <p class="stock" data-template="{{ 'product.low_stock' | t: count: '[count]' }}" data-stock{% unless current.inventory_management and current.inventory_quantity > 0 and current.inventory_quantity <= threshold %} hidden{% endunless %}>
+              <span data-stock-text>{{ 'product.low_stock' | t: count: current.inventory_quantity }}</span>
+            </p>
+            {%- form 'product', product, id: form_id, class: 'buy__form', novalidate: 'novalidate', data-product-form: '' -%}
+              <input type="hidden" name="id" value="{{ current.id }}" data-variant-id>
+              <div class="buy__row">
+                <button type="submit" name="add" class="btn-solid btn-solid--wide" data-add{% unless current.available %} disabled{% endunless %}>
+                  <span data-add-label data-text-add="{{ 'product.add_to_cart' | t }}" data-text-sold="{{ 'product.sold_out' | t }}">{% if current.available %}{{ 'product.add_to_cart' | t }}{% else %}{{ 'product.sold_out' | t }}{% endif %}</span>
+                  <span class="btn-solid__price" data-add-price>{{ current.price | money }}</span>
+                </button>
+                {%- if settings.enable_wishlist -%}
+                  <button type="button" class="btn-square" data-wishlist-toggle="{{ product.handle }}" aria-pressed="false" aria-label="{{ 'product.add_wishlist' | t }}">{% render 'icon', name: 'heart' %}</button>
+                {%- endif -%}
+              </div>
+              {%- if block.settings.show_dynamic_checkout -%}
+                {{ form | payment_button }}
+              {%- endif -%}
+            {%- endform -%}
+
+            <div class="notify" data-notify{% if current.available %} hidden{% endif %}>
+              <h2 class="label">{{ 'product.notify_title' | t }}</h2>
+              <p class="muted">{{ 'product.notify_text' | t }}</p>
+              {%- form 'contact', class: 'inline-form', id: 'notify-form' -%}
+                <input type="hidden" name="contact[konu]" value="{{ 'product.notify_subject' | t }}">
+                <input type="hidden" name="contact[urun]" value="{{ product.title | escape }}">
+                <input type="hidden" name="contact[secenek]" value="{{ current.title | escape }}" data-notify-variant>
+                <label class="visually-hidden" for="notify-email">{{ 'product.notify_email' | t }}</label>
+                <div class="inline-form__row">
+                  <input class="field" id="notify-email" type="email" name="contact[email]" autocomplete="email" placeholder="{{ 'newsletter.placeholder' | t }}" required>
+                  <button type="submit" class="btn-solid btn-solid--small">{{ 'product.notify_submit' | t }}</button>
+                </div>
+                {%- if form.posted_successfully? -%}
+                  <p class="form-note form-note--ok" role="status">{{ 'product.notify_success' | t }}</p>
+                {%- endif -%}
+              {%- endform -%}
+            </div>
+          </div>
+        {%- when 'description' -%}
+          {%- if product.description != blank -%}
+            <div class="product__desc rte" {{ block.shopify_attributes }}>{{ product.description }}</div>
+          {%- endif -%}
+        {%- when 'accordion' -%}
+          {%- liquid
+            assign acc_content = block.settings.text
+            case block.settings.source
+              when 'material'
+                assign acc_content = product.metafields.custom.material.value
+              when 'care'
+                assign acc_content = product.metafields.custom.care.value
+            endcase
+            if block.settings.page != blank
+              assign acc_content = block.settings.page.content
+            endif
+          -%}
+          {%- if acc_content != blank -%}
+            <details class="accordion" {{ block.shopify_attributes }}{% if block.settings.open %} open{% endif %}>
+              <summary><span>{{ block.settings.heading }}</span>{% render 'icon', name: 'plus' %}</summary>
+              <div class="accordion__body rte">{{ acc_content }}</div>
+            </details>
+          {%- endif -%}
+        {%- when 'complete_look' -%}
+          {%- assign look = product.metafields.custom.complete_the_look.value -%}
+          {%- if look != blank -%}
+            <div class="look" {{ block.shopify_attributes }}>
+              <h2 class="label">{{ block.settings.heading }}</h2>
+              <ul class="look__list" role="list">
+                {%- for item in look limit: 4 -%}
+                  <li class="look__item">
+                    <a href="{{ item.url }}" class="look__media">
+                      {%- if item.featured_media -%}
+                        <img src="{{ item.featured_media | image_url: width: 200 }}" width="100" height="100" loading="lazy" alt="">
+                      {%- endif -%}
+                    </a>
+                    <div>
+                      <a href="{{ item.url }}">{{ item.title }}</a>
+                      <p class="muted">{{ item.price | money }}</p>
+                    </div>
+                    {%- if settings.enable_quick_view -%}
+                      <button type="button" class="link-plain" data-quick-view="{{ item.url }}" aria-haspopup="dialog">{{ 'product.quick_view' | t }}</button>
+                    {%- endif -%}
+                  </li>
+                {%- endfor -%}
+              </ul>
+            </div>
+          {%- endif -%}
+      {%- endcase -%}
+    {%- endfor -%}
+  </div>
+
+  <script type="application/json" data-variants>
+    [
+      {%- for v in product.variants -%}
+        {
+          "id": {{ v.id }},
+          "options": {{ v.options | json }},
+          "available": {{ v.available | json }},
+          "price": {{ v.price }},
+          "compare": {{ v.compare_at_price | default: 0 }},
+          "qty": {% if v.inventory_management %}{{ v.inventory_quantity }}{% else %}null{% endif %},
+          "media": {% if v.featured_media %}{{ v.featured_media.id }}{% else %}null{% endif %},
+          "title": {{ v.title | json }}
+        }{% unless forloop.last %},{% endunless %}
+      {%- endfor -%}
+    ]
+  </script>
+  <script type="application/json" data-recent>
+    {
+      "handle": {{ product.handle | json }},
+      "title": {{ product.title | json }},
+      "url": {{ product.url | json }},
+      "price": {{ product.price | money | json }},
+      "image": {% if product.featured_media %}{{ product.featured_media | image_url: width: 600 | json }}{% else %}null{% endif %}
+    }
+  </script>
+  <script type="application/ld+json">
+    {{ product | structured_data }}
+  </script>
+</section>
+
+<div class="sticky-buy" data-sticky-buy hidden>
+  <div class="sticky-buy__info">
+    <strong>{{ product.title }}</strong>
+    <span data-sticky-price>{{ current.price | money }}</span>
+  </div>
+  <button type="submit" form="{{ form_id }}" class="btn-solid btn-solid--small" data-sticky-add{% unless current.available %} disabled{% endunless %}>{{ 'product.add_to_cart' | t }}</button>
+</div>
+
+{% schema %}
+{
+  "name": "Ürün bilgisi",
+  "tag": "div",
+  "blocks": [
+    { "type": "@app" },
+    { "type": "title", "name": "Başlık", "limit": 1, "settings": [ { "type": "checkbox", "id": "show_vendor", "label": "Markayı göster", "default": false } ] },
+    { "type": "price", "name": "Fiyat", "limit": 1, "settings": [ { "type": "checkbox", "id": "show_installments", "label": "Taksit bilgisini göster", "default": true } ] },
+    {
+      "type": "variant_picker", "name": "Renk ve beden seçici", "limit": 1,
+      "settings": [
+        { "type": "page", "id": "size_page", "label": "Kendi beden tablonuz", "info": "Boş bırakılırsa ürün türüne göre hazır tablo gösterilir." }
+      ]
+    },
+    {
+      "type": "buy_buttons", "name": "Sepete ekle", "limit": 1,
+      "settings": [ { "type": "checkbox", "id": "show_dynamic_checkout", "label": "Hızlı ödeme düğmelerini göster", "default": false } ]
+    },
+    { "type": "description", "name": "Açıklama", "limit": 1 },
+    {
+      "type": "accordion", "name": "Açılır bilgi",
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Başlık", "default": "Malzeme" },
+        {
+          "type": "select", "id": "source", "label": "İçerik kaynağı",
+          "options": [
+            { "value": "text", "label": "Aşağıdaki metin" },
+            { "value": "material", "label": "Ürünün malzeme bilgisi (custom.material)" },
+            { "value": "care", "label": "Ürünün bakım bilgisi (custom.care)" }
+          ],
+          "default": "text"
+        },
+        { "type": "richtext", "id": "text", "label": "Metin" },
+        { "type": "page", "id": "page", "label": "Ya da bir sayfanın içeriği" },
+        { "type": "checkbox", "id": "open", "label": "Açık başlasın", "default": false }
+      ]
+    },
+    {
+      "type": "complete_look", "name": "Kombini tamamla", "limit": 1,
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Başlık", "default": "Kombini tamamla" },
+        { "type": "paragraph", "content": "Ürünler, ürünün \"custom.complete_the_look\" alanından gelir. Boşsa bu blok gizlenir." }
+      ]
+    }
+  ]
+}
+{% endschema %}

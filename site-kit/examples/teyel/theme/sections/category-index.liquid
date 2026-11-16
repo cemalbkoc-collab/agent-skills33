@@ -1,0 +1,44 @@
+<section class="section catindex" aria-labelledby="ci-{{ section.id }}">
+  <div class="page">
+    <h2 class="visually-hidden" id="ci-{{ section.id }}">{{ section.settings.heading }}</h2>
+    <ul class="catindex__list" role="list" data-sc-stagger="90">
+      {%- for block in section.blocks -%}
+        {%- assign menu = linklists[block.settings.menu] -%}
+        <li class="catindex__row" {{ block.shopify_attributes }} data-sc-in data-reveal>
+          <a class="catindex__title" href="{{ block.settings.link | default: routes.collections_url }}">{{ block.settings.title }}</a>
+          <ul class="catindex__subs" role="list">
+            {%- for link in menu.links -%}
+              <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+            {%- endfor -%}
+          </ul>
+          {%- if block.settings.image != blank -%}
+            <img class="catindex__thumb" src="{{ block.settings.image | image_url: width: 480 }}" width="240" height="240" loading="lazy" alt="">
+          {%- endif -%}
+        </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Kategori dizini",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Başlık (ekran okuyucular için)", "default": "Kategoriler" }
+  ],
+  "blocks": [
+    {
+      "type": "category",
+      "name": "Kategori",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Ad", "default": "Giyim" },
+        { "type": "url", "id": "link", "label": "Bağlantı" },
+        { "type": "link_list", "id": "menu", "label": "Alt kategoriler menüsü" },
+        { "type": "image_picker", "id": "image", "label": "Küçük görsel" }
+      ]
+    }
+  ],
+  "max_blocks": 5,
+  "presets": [ { "name": "Kategori dizini", "blocks": [ { "type": "category" }, { "type": "category" }, { "type": "category" } ] } ]
+}
+{% endschema %}

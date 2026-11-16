@@ -1,0 +1,66 @@
+{%- liquid
+  assign collection = section.settings.collection
+  assign date = section.settings.date
+-%}
+<section class="drop" data-sc-act="flow" aria-labelledby="drop-{{ section.id }}">
+  <div class="drop__wipe" data-sc-reveal="up" data-sc-reveal-at="0.03 0.24">
+  <div class="drop__ticker" aria-hidden="true">
+    <span>{{ section.settings.ticker }} · {{ section.settings.ticker }} · {{ section.settings.ticker }} · {{ section.settings.ticker }} ·&nbsp;</span>
+  </div>
+  <div class="drop__inner page">
+    <div class="drop__text">
+      <h2 class="drop__title" id="drop-{{ section.id }}">{{ section.settings.heading | newline_to_br }}</h2>
+      {%- if section.settings.text != blank -%}
+        <p class="drop__sub">{{ section.settings.text }}</p>
+      {%- endif -%}
+      {%- if date != blank -%}
+        <div class="countdown" data-countdown="{{ date }}" role="timer" aria-label="{{ 'drop.countdown_label' | t }}">
+          <span><b data-cd="d">00</b><small>{{ 'drop.days' | t }}</small></span>
+          <span><b data-cd="h">00</b><small>{{ 'drop.hours' | t }}</small></span>
+          <span><b data-cd="m">00</b><small>{{ 'drop.minutes' | t }}</small></span>
+          <span><b data-cd="s">00</b><small>{{ 'drop.seconds' | t }}</small></span>
+        </div>
+        <p class="drop__live" data-countdown-done hidden>{{ 'drop.live' | t }}</p>
+      {%- endif -%}
+      <div class="drop__actions">
+        {%- if section.settings.show_form -%}
+          {%- form 'customer', class: 'drop__form', id: 'drop-form' -%}
+            <input type="hidden" name="contact[tags]" value="newsletter,drop">
+            <label class="visually-hidden" for="drop-email-{{ section.id }}">{{ 'newsletter.label' | t }}</label>
+            <input class="drop__input" id="drop-email-{{ section.id }}" type="email" name="contact[email]" autocomplete="email" placeholder="{{ 'newsletter.placeholder' | t }}" required>
+            <button type="submit" class="drop__btn">{{ 'drop.notify' | t }}</button>
+            {%- if form.posted_successfully? -%}
+              <p class="drop__note" role="status">{{ 'newsletter.success' | t }}</p>
+            {%- endif -%}
+          {%- endform -%}
+        {%- endif -%}
+        {%- if collection != blank -%}
+          <a class="drop__link" href="{{ collection.url }}">{{ section.settings.link_label | default: collection.title }}{% render 'icon', name: 'arrow' %}</a>
+        {%- endif -%}
+      </div>
+    </div>
+    {%- if section.settings.image != blank -%}
+      <div class="drop__media">
+        <img src="{{ section.settings.image | image_url: width: 900 }}" srcset="{{ section.settings.image | image_url: width: 600 }} 600w, {{ section.settings.image | image_url: width: 900 }} 900w, {{ section.settings.image | image_url: width: 1400 }} 1400w" sizes="(min-width: 990px) 40vw, 90vw" width="{{ section.settings.image.width }}" height="{{ section.settings.image.height }}" loading="lazy" alt="{{ section.settings.image.alt | escape }}">
+      </div>
+    {%- endif -%}
+  </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Drop geri sayımı",
+  "settings": [
+    { "type": "text", "id": "ticker", "label": "Kayan yazı", "default": "Drop 02 · Ham İndigo · 120 adet" },
+    { "type": "textarea", "id": "heading", "label": "Başlık", "default": "Drop\n02" },
+    { "type": "text", "id": "text", "label": "Alt metin", "default": "Ham indigo. 120 adet." },
+    { "type": "text", "id": "date", "label": "Drop tarihi ve saati", "info": "Şu biçimde yazın: 2026-12-18T20:00:00+03:00", "default": "2026-12-18T20:00:00+03:00" },
+    { "type": "image_picker", "id": "image", "label": "Görsel" },
+    { "type": "checkbox", "id": "show_form", "label": "\"Haber ver\" e-posta alanını göster", "default": true },
+    { "type": "collection", "id": "collection", "label": "Bağlanacak koleksiyon" },
+    { "type": "text", "id": "link_label", "label": "Bağlantı yazısı" }
+  ],
+  "presets": [ { "name": "Drop geri sayımı" } ]
+}
+{% endschema %}

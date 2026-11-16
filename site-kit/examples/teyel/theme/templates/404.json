@@ -1,0 +1,1 @@
+{ "sections": { "main": { "type": "main-404", "settings": {} }, "best": { "type": "featured-collection", "settings": { "heading": "Belki bunlar", "collection": "cok-satanlar", "limit": 8, "layout": "rail" } } }, "order": ["main", "best"] }

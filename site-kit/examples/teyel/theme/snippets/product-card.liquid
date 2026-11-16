@@ -1,0 +1,79 @@
+{%- comment -%}
+  Ürün kartı. Parametreler: product (zorunlu), eager (isteğe bağlı), sizes (isteğe bağlı), show_limited (isteğe bağlı)
+{%- endcomment -%}
+{%- liquid
+  assign media = product.featured_media
+  assign img_sizes = sizes | default: '(min-width: 990px) 25vw, 50vw'
+  assign color_option = product.options_by_name['Renk']
+  assign is_new = false
+  if product.tags contains 'Yeni'
+    assign is_new = true
+  endif
+-%}
+<article class="card" data-card data-handle="{{ product.handle }}">
+  <div class="card__media">
+    <a href="{{ product.url }}" class="card__link" aria-label="{{ product.title | escape }}">
+      {%- if media -%}
+        <img
+          class="card__img"
+          src="{{ media | image_url: width: 600 }}"
+          srcset="{{ media | image_url: width: 300 }} 300w, {{ media | image_url: width: 450 }} 450w, {{ media | image_url: width: 600 }} 600w, {{ media | image_url: width: 900 }} 900w"
+          sizes="{{ img_sizes }}"
+          width="{{ media.width | default: 1000 }}"
+          height="{{ media.height | default: 1000 }}"
+          loading="{% if eager %}eager{% else %}lazy{% endif %}"
+          alt="{{ media.alt | default: product.title | escape }}"
+        >
+        {%- if product.media.size > 1 -%}
+          {%- assign second = product.media[1] -%}
+          <img
+            class="card__img card__img--alt"
+            src="{{ second | image_url: width: 600 }}"
+            srcset="{{ second | image_url: width: 300 }} 300w, {{ second | image_url: width: 600 }} 600w, {{ second | image_url: width: 900 }} 900w"
+            sizes="{{ img_sizes }}"
+            width="{{ second.width | default: 1000 }}"
+            height="{{ second.height | default: 1000 }}"
+            loading="lazy"
+            alt=""
+          >
+        {%- endif -%}
+      {%- else -%}
+        {{ 'product-1' | placeholder_svg_tag: 'card__img card__img--placeholder' }}
+      {%- endif -%}
+    </a>
+    <div class="card__actions">
+      {%- if settings.enable_wishlist -%}
+        <button type="button" class="card__icon" data-wishlist-toggle="{{ product.handle }}" aria-pressed="false" aria-label="{{ 'product.add_wishlist' | t }}: {{ product.title | escape }}">
+          {% render 'icon', name: 'heart' %}
+        </button>
+      {%- endif -%}
+      {%- if settings.enable_quick_view -%}
+        <button type="button" class="card__icon card__quick" data-quick-view="{{ product.url }}" aria-haspopup="dialog" aria-label="{{ 'product.quick_view' | t }}: {{ product.title | escape }}">
+          {% render 'icon', name: 'eye' %}
+        </button>
+      {%- endif -%}
+    </div>
+  </div>
+  <div class="card__body">
+    <div class="card__row">
+      <h3 class="card__title"><a href="{{ product.url }}">{{ product.title }}</a></h3>
+      {% render 'price', product: product %}
+    </div>
+    <p class="card__meta">
+      {%- if product.available == false -%}
+        <span class="card__flag">{{ 'product.sold_out' | t }}</span>
+      {%- elsif product.compare_at_price > product.price -%}
+        <span class="card__flag card__flag--accent">{{ 'product.sale' | t }}</span>
+      {%- elsif is_new -%}
+        <span class="card__flag">{{ 'product.new' | t }}</span>
+      {%- endif -%}
+      <span>{{ product.type }}</span>
+      {%- if color_option and color_option.values.size > 1 -%}
+        <span>{{ 'product.colors_count' | t: count: color_option.values.size }}</span>
+      {%- endif -%}
+      {%- if settings.show_rating and product.metafields.reviews.rating.value != blank -%}
+        <span class="card__rating">{% render 'icon', name: 'star' %}{{ product.metafields.reviews.rating.value.rating | round: 1 }}</span>
+      {%- endif -%}
+    </p>
+  </div>
+</article>

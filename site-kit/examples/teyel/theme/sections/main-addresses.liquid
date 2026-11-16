@@ -1,0 +1,32 @@
+<section class="page accountpage">
+  <header class="accountpage__head">
+    <h1 class="h1">{{ 'customer.addresses' | t }}</h1>
+    <a class="link-plain" href="{{ routes.account_url }}">{{ 'customer.back' | t }}</a>
+  </header>
+  {%- paginate customer.addresses by 10 -%}
+    <ul class="accountpage__addresses" role="list">
+      {%- for address in customer.addresses -%}
+        <li>
+          {%- if address == customer.default_address -%}<p class="label">{{ 'customer.default' | t }}</p>{%- endif -%}
+          <address class="accountpage__address">{{ address | format_address }}</address>
+          <details class="accordion">
+            <summary><span>{{ 'customer.edit' | t }}</span>{% render 'icon', name: 'plus' %}</summary>
+            <div class="accordion__body">{% render 'address-form', address: address, id_suffix: address.id %}</div>
+          </details>
+          {%- form 'customer_address', address, id: 'delete-address' -%}
+            <input type="hidden" name="_method" value="delete">
+            <button type="submit" class="link-plain">{{ 'customer.delete' | t }}</button>
+          {%- endform -%}
+        </li>
+      {%- endfor -%}
+    </ul>
+  {%- endpaginate -%}
+  <details class="accordion" open>
+    <summary><span>{{ 'customer.add_address' | t }}</span>{% render 'icon', name: 'plus' %}</summary>
+    <div class="accordion__body">{% render 'address-form', address: customer.new_address, id_suffix: 'new' %}</div>
+  </details>
+</section>
+
+{% schema %}
+{ "name": "Adresler", "settings": [] }
+{% endschema %}

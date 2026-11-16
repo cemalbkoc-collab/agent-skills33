@@ -1,0 +1,12 @@
+<section class="cookie" data-cookie-banner aria-label="{{ 'cookie.title' | t }}" hidden>
+  <p class="cookie__text">
+    {{ settings.cookie_text }}
+    {%- if settings.cookie_policy_link != blank -%}
+      <a href="{{ settings.cookie_policy_link }}">{{ 'cookie.policy' | t }}</a>
+    {%- endif -%}
+  </p>
+  <div class="cookie__actions">
+    <button type="button" class="btn-line" data-cookie-decline>{{ 'cookie.decline' | t }}</button>
+    <button type="button" class="btn-solid btn-solid--small" data-cookie-accept>{{ 'cookie.accept' | t }}</button>
+  </div>
+</section>

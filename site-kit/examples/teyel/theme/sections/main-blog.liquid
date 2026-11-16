@@ -1,0 +1,40 @@
+<section class="page lookbook">
+  <header class="textpage__head">
+    <p class="label">{{ section.settings.kicker }}</p>
+    <h1 class="h1">{{ blog.title }}</h1>
+  </header>
+  {%- paginate blog.articles by 9 -%}
+    <ul class="lookbook__list" role="list">
+      {%- for article in blog.articles -%}
+        <li class="lookbook__item" data-reveal>
+          <a href="{{ article.url }}" class="lookbook__link">
+            <div class="lookbook__media">
+              {%- if article.image -%}
+                <img src="{{ article.image | image_url: width: 900 }}" srcset="{{ article.image | image_url: width: 500 }} 500w, {{ article.image | image_url: width: 900 }} 900w, {{ article.image | image_url: width: 1400 }} 1400w" sizes="(min-width: 990px) 50vw, 100vw" width="{{ article.image.width }}" height="{{ article.image.height }}" loading="{% if forloop.first %}eager{% else %}lazy{% endif %}" alt="{{ article.image.alt | escape }}">
+              {%- else -%}
+                {{ 'lifestyle-1' | placeholder_svg_tag: 'lookbook__placeholder' }}
+              {%- endif -%}
+            </div>
+            <p class="label">{{ article.published_at | date: '%d.%m.%Y' }}</p>
+            <h2 class="h2">{{ article.title }}</h2>
+            {%- if article.excerpt != blank -%}<p class="muted">{{ article.excerpt | strip_html | truncatewords: 24 }}</p>{%- endif -%}
+          </a>
+        </li>
+      {%- endfor -%}
+    </ul>
+    {%- if paginate.pages > 1 -%}
+      <nav class="pagination" aria-label="{{ 'general.pagination' | t }}">
+        {%- if paginate.previous -%}<a class="link-stitch" href="{{ paginate.previous.url }}" rel="prev">{{ 'general.previous' | t }}</a>{%- endif -%}
+        <span class="label">{{ 'general.page_of' | t: current: paginate.current_page, total: paginate.pages }}</span>
+        {%- if paginate.next -%}<a class="link-stitch" href="{{ paginate.next.url }}" rel="next">{{ 'general.next' | t }}</a>{%- endif -%}
+      </nav>
+    {%- endif -%}
+  {%- endpaginate -%}
+</section>
+
+{% schema %}
+{
+  "name": "Lookbook listesi",
+  "settings": [ { "type": "text", "id": "kicker", "label": "Üst etiket", "default": "Atölye defteri" } ]
+}
+{% endschema %}

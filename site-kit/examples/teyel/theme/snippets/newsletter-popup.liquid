@@ -1,0 +1,14 @@
+<dialog class="dialog dialog--popup" id="newsletter-popup" data-newsletter-popup data-delay="{{ settings.popup_delay }}" aria-labelledby="newsletter-popup-title">
+  <button type="button" class="dialog__close" data-dialog-close aria-label="{{ 'general.close' | t }}">{% render 'icon', name: 'close' %}</button>
+  <div class="dialog__body">
+    <h2 class="h3" id="newsletter-popup-title">{{ settings.popup_heading }}</h2>
+    <p class="muted">{{ settings.popup_text }}</p>
+    {%- form 'customer', class: 'inline-form', id: 'newsletter-popup-form' -%}
+      <input type="hidden" name="contact[tags]" value="newsletter,popup">
+      <label class="visually-hidden" for="newsletter-popup-email">{{ 'newsletter.label' | t }}</label>
+      <input class="field" id="newsletter-popup-email" type="email" name="contact[email]" autocomplete="email" placeholder="{{ 'newsletter.placeholder' | t }}" required>
+      <button type="submit" class="btn-solid btn-solid--small">{{ 'newsletter.submit' | t }}</button>
+    {%- endform -%}
+    <p class="fine">{{ 'newsletter.privacy' | t }}</p>
+  </div>
+</dialog>

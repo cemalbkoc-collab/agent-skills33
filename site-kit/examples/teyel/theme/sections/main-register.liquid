@@ -1,0 +1,20 @@
+<section class="page authpage">
+  <div class="authpage__card">
+    <h1 class="h1">{{ 'customer.register_title' | t }}</h1>
+    {%- form 'create_customer', class: 'authpage__form', id: 'customer-register' -%}
+      {%- if form.errors -%}<p class="form-note form-note--error" role="alert">{{ form.errors | default_errors }}</p>{%- endif -%}
+      <p><label for="reg-first">{{ 'customer.first_name' | t }}</label><input class="field" id="reg-first" type="text" name="customer[first_name]" autocomplete="given-name"></p>
+      <p><label for="reg-last">{{ 'customer.last_name' | t }}</label><input class="field" id="reg-last" type="text" name="customer[last_name]" autocomplete="family-name"></p>
+      <p><label for="reg-email">{{ 'customer.email' | t }}</label><input class="field" id="reg-email" type="email" name="customer[email]" autocomplete="email" required></p>
+      <p><label for="reg-password">{{ 'customer.password' | t }}</label><input class="field" id="reg-password" type="password" name="customer[password]" autocomplete="new-password" minlength="5" required></p>
+      <label class="check"><input type="checkbox" name="customer[accepts_marketing]" value="true"><span>{{ 'customer.marketing' | t }}</span></label>
+      <p class="fine">{{ 'customer.kvkk' | t }}</p>
+      <button type="submit" class="btn-solid">{{ 'customer.create' | t }}</button>
+    {%- endform -%}
+    <p class="authpage__alt">{{ 'customer.have_account' | t }} <a class="link-stitch" href="{{ routes.account_login_url }}">{{ 'customer.sign_in' | t }}</a></p>
+  </div>
+</section>
+
+{% schema %}
+{ "name": "Kayıt", "settings": [] }
+{% endschema %}

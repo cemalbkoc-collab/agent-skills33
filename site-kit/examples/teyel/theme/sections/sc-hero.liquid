@@ -1,0 +1,89 @@
+{%- comment -%}
+  Katmanlı açılış. Düzlemler arkadan öne: temiz duvar plakası, "Ara Katman" yazısı, kişi (alfa kesik),
+  ön planda asılı iplik ve iğne. Plaka ile kişi aynı çerçevede durur ve ayak noktasından ölçeklenir,
+  böylece kişi zemine basmaya devam eder. Etiket gerçek ürün verisinden gelir.
+{%- endcomment -%}
+{%- liquid
+  assign plate = section.settings.plate
+  assign subject = section.settings.subject
+  assign fore = section.settings.foreground
+  assign ar = 1.7684
+  if plate != blank
+    assign ar = plate.aspect_ratio
+  endif
+-%}
+<section
+  class="ah"
+  data-scene="hero"
+  data-sc-act="pin"
+  data-sc-span="{{ section.settings.span | times: 0.1 }}"
+  style="--ar: {{ ar }}; --fx: {{ section.settings.focus_x | times: 0.01 }}; --fx-m: {{ section.settings.focus_x_mobile | times: 0.01 }}; --fy: {{ section.settings.focus_y | times: 0.01 }}; --px: {{ section.settings.pivot_x }}%; --py: {{ section.settings.pivot_y }}%;"
+  aria-labelledby="ah-{{ section.id }}"
+>
+  <div class="ah__stage" data-sc-stage data-ah-stage>
+    <div class="ah__frame">
+      <div class="ah__plane ah__plane--plate">
+        {%- if plate != blank -%}
+          <img src="{{ plate | image_url: width: 1800 }}" srcset="{{ plate | image_url: width: 1100 }} 1100w, {{ plate | image_url: width: 1800 }} 1800w, {{ plate | image_url: width: 2700 }} 2700w" sizes="(max-width: 749px) 178svh, max(100vw, 178svh)" width="{{ plate.width }}" height="{{ plate.height }}" alt="" fetchpriority="high">
+        {%- else -%}
+          {{ 'hero-apparel-1' | placeholder_svg_tag: 'ah__placeholder' }}
+        {%- endif -%}
+      </div>
+      <p class="ah__word" aria-hidden="true">{{ section.settings.word | newline_to_br }}</p>
+      {%- if subject != blank -%}
+        <div class="ah__plane ah__plane--subject">
+          <img src="{{ subject | image_url: width: 1800 }}" srcset="{{ subject | image_url: width: 1100 }} 1100w, {{ subject | image_url: width: 1800 }} 1800w, {{ subject | image_url: width: 2700 }} 2700w" sizes="(max-width: 749px) 178svh, max(100vw, 178svh)" width="{{ subject.width }}" height="{{ subject.height }}" alt="{{ subject.alt | escape }}" fetchpriority="high">
+        </div>
+      {%- endif -%}
+    </div>
+    {%- if fore != blank -%}
+      <div class="ah__fore" data-sc-parallax="-2.4" aria-hidden="true">
+        <img src="{{ fore | image_url: width: 600 }}" width="{{ fore.width }}" height="{{ fore.height }}" alt="" loading="lazy">
+      </div>
+    {%- endif -%}
+
+    <aside class="ah__label">
+      <h2 class="ah__title" id="ah-{{ section.id }}">{{ section.settings.word | newline_to_br | replace: '<br />', ' ' | strip_newlines }}</h2>
+      {%- if section.settings.kicker != blank -%}<p class="ah__kicker">{{ section.settings.kicker }}</p>{%- endif -%}
+      {%- if section.settings.products.size > 0 -%}
+        <dl class="ah__facts">
+          {%- for product in section.settings.products -%}
+            <div>
+              <dt><a href="{{ product.url }}">{{ product.title }}</a></dt>
+              <dd>{{ product.metafields.custom.material.value | split: ',' | first }}</dd>
+              <dd class="ah__price">{{ product.price | money }}</dd>
+            </div>
+          {%- endfor -%}
+        </dl>
+      {%- endif -%}
+      {%- if section.settings.link_label != blank -%}
+        <a class="link-stitch" href="{{ section.settings.link | default: routes.all_products_collection_url }}">{{ section.settings.link_label }}{% render 'icon', name: 'arrow' %}</a>
+      {%- endif -%}
+    </aside>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Katmanlı açılış",
+  "settings": [
+    { "type": "paragraph", "content": "Üç görsel aynı boyutta ve aynı çerçevede olmalı: kişisiz duvar (plaka), yalnızca kişi (şeffaf PNG) ve isteğe bağlı ön plan. Teslim paketindeki kampanya/katman klasörünü kullanın." },
+    { "type": "image_picker", "id": "plate", "label": "Arka plaka (kişisiz)" },
+    { "type": "image_picker", "id": "subject", "label": "Kişi (şeffaf PNG, plaka ile aynı boyut)" },
+    { "type": "image_picker", "id": "foreground", "label": "Ön plan (beyaz zemin üstünde iplik)", "info": "Beyaz kısımlar sayfa zeminine karışır." },
+    { "type": "textarea", "id": "word", "label": "Duvar ile kişi arasındaki yazı", "default": "Ara\nKatman" },
+    { "type": "text", "id": "kicker", "label": "Etiket satırı", "default": "Kış 26 koleksiyonundan bir bakış" },
+    { "type": "product_list", "id": "products", "label": "Bakıştaki ürünler", "limit": 3 },
+    { "type": "text", "id": "link_label", "label": "Bağlantı yazısı", "default": "Kış 26'yı gör" },
+    { "type": "url", "id": "link", "label": "Bağlantı" },
+    { "type": "header", "content": "Kadraj" },
+    { "type": "range", "id": "focus_x", "label": "Yatay odak (masaüstü)", "min": 0, "max": 100, "step": 1, "unit": "%", "default": 70 },
+    { "type": "range", "id": "focus_x_mobile", "label": "Yatay odak (telefon)", "min": 0, "max": 100, "step": 1, "unit": "%", "default": 86 },
+    { "type": "range", "id": "focus_y", "label": "Dikey odak", "min": 0, "max": 100, "step": 1, "unit": "%", "default": 85 },
+    { "type": "range", "id": "pivot_x", "label": "Ayak noktası (yatay)", "min": 0, "max": 100, "step": 1, "unit": "%", "default": 77 },
+    { "type": "range", "id": "pivot_y", "label": "Ayak noktası (dikey)", "min": 0, "max": 100, "step": 1, "unit": "%", "default": 96 },
+    { "type": "range", "id": "span", "label": "Kaydırma uzunluğu", "min": 12, "max": 30, "step": 1, "default": 18, "info": "Ekran yüksekliğinin onda biri cinsinden." }
+  ],
+  "presets": [ { "name": "Katmanlı açılış" } ]
+}
+{% endschema %}

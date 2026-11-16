@@ -1,0 +1,153 @@
+{%- liquid
+  assign menu = section.settings.menu
+  assign menu_links = linklists[menu].links
+-%}
+<header class="header" data-header>
+  <div class="header__inner page">
+    <button type="button" class="header__icon header__menu-btn" data-drawer-open="menu-drawer" aria-controls="menu-drawer" aria-expanded="false" aria-label="{{ 'general.menu' | t }}">
+      {% render 'icon', name: 'menu' %}
+    </button>
+
+    {%- if request.page_type == 'index' -%}<h1 class="header__logo">{%- else -%}<p class="header__logo">{%- endif -%}
+      <a href="{{ routes.root_url }}" aria-label="{{ shop.name | escape }}">
+        {%- if settings.logo != blank -%}
+          <img src="{{ settings.logo | image_url: width: 480 }}" width="{{ settings.logo_width }}" height="{{ settings.logo_width | divided_by: settings.logo.aspect_ratio | round }}" alt="{{ settings.logo.alt | default: shop.name | escape }}" style="width: {{ settings.logo_width }}px">
+        {%- else -%}
+          {% render 'icon', name: 'needle' %}<span class="header__wordmark">{{ shop.name }}</span>
+        {%- endif -%}
+      </a>
+    {%- if request.page_type == 'index' -%}</h1>{%- else -%}</p>{%- endif -%}
+
+    <nav class="header__nav" aria-label="{{ 'general.main_menu' | t }}">
+      <ul class="nav" role="list">
+        {%- for link in menu_links -%}
+          <li class="nav__item{% if link.links.size > 0 %} nav__item--has-mega{% endif %}">
+            <a href="{{ link.url }}" class="nav__link"{% if link.current %} aria-current="page"{% endif %}{% if link.links.size > 0 %} aria-haspopup="true"{% endif %}>{{ link.title }}</a>
+            {%- if link.links.size > 0 -%}
+              <div class="mega">
+                <div class="mega__inner page">
+                  <ul class="mega__list" role="list">
+                    {%- for child in link.links -%}
+                      <li><a href="{{ child.url }}" class="mega__link">{{ child.title }}</a></li>
+                    {%- endfor -%}
+                    <li><a href="{{ link.url }}" class="mega__link mega__link--all">{{ 'general.view_all' | t }}</a></li>
+                  </ul>
+                  {%- for block in section.blocks -%}
+                    {%- if block.settings.parent == link.title and block.settings.image != blank -%}
+                      <a href="{{ block.settings.link | default: link.url }}" class="mega__promo" {{ block.shopify_attributes }}>
+                        <img src="{{ block.settings.image | image_url: width: 640 }}" width="640" height="{{ 640 | divided_by: block.settings.image.aspect_ratio | round }}" loading="lazy" alt="{{ block.settings.image.alt | escape }}">
+                        <span>{{ block.settings.caption }}</span>
+                      </a>
+                    {%- endif -%}
+                  {%- endfor -%}
+                </div>
+              </div>
+            {%- endif -%}
+          </li>
+        {%- endfor -%}
+      </ul>
+    </nav>
+
+    <div class="header__tools">
+      <button type="button" class="header__icon" data-dialog-open="search-dialog" aria-haspopup="dialog" aria-label="{{ 'general.search' | t }}">
+        {% render 'icon', name: 'search' %}
+      </button>
+      {%- if shop.customer_accounts_enabled -%}
+        <a class="header__icon header__icon--desktop" href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}" aria-label="{{ 'general.account' | t }}">
+          {% render 'icon', name: 'user' %}
+        </a>
+      {%- endif -%}
+      {%- if settings.enable_wishlist and section.settings.wishlist_page != blank -%}
+        <a class="header__icon header__icon--desktop" href="{{ section.settings.wishlist_page.url }}">
+          {% render 'icon', name: 'heart' %}<span class="visually-hidden">{{ 'general.wishlist' | t }}</span><span class="header__count" data-wishlist-count hidden>0</span>
+        </a>
+      {%- endif -%}
+      <a class="header__icon" href="{{ routes.cart_url }}" data-drawer-open="cart-drawer" aria-controls="cart-drawer">
+        {% render 'icon', name: 'bag' %}<span class="visually-hidden">{{ 'general.cart' | t }}</span><span class="header__count" data-cart-count{% if cart.item_count == 0 %} hidden{% endif %}>{{ cart.item_count }}</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<dialog class="drawer drawer--left" id="menu-drawer" aria-label="{{ 'general.menu' | t }}">
+  <div class="drawer__head">
+    <span class="label">{{ 'general.menu' | t }}</span>
+    <button type="button" class="drawer__close" data-dialog-close aria-label="{{ 'general.close' | t }}">{% render 'icon', name: 'close' %}</button>
+  </div>
+  <nav class="drawer__body" aria-label="{{ 'general.main_menu' | t }}">
+    <ul class="mnav" role="list">
+      {%- for link in menu_links -%}
+        <li>
+          {%- if link.links.size > 0 -%}
+            <details class="mnav__group">
+              <summary class="mnav__link">{{ link.title }}{% render 'icon', name: 'chevron' %}</summary>
+              <ul role="list">
+                {%- for child in link.links -%}
+                  <li><a href="{{ child.url }}" class="mnav__sub">{{ child.title }}</a></li>
+                {%- endfor -%}
+                <li><a href="{{ link.url }}" class="mnav__sub mnav__sub--all">{{ 'general.view_all' | t }}</a></li>
+              </ul>
+            </details>
+          {%- else -%}
+            <a href="{{ link.url }}" class="mnav__link">{{ link.title }}</a>
+          {%- endif -%}
+        </li>
+      {%- endfor -%}
+    </ul>
+    <ul class="mnav mnav--secondary" role="list">
+      {%- if shop.customer_accounts_enabled -%}
+        <li><a href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}">{{ 'general.account' | t }}</a></li>
+      {%- endif -%}
+      {%- if settings.enable_wishlist and section.settings.wishlist_page != blank -%}
+        <li><a href="{{ section.settings.wishlist_page.url }}">{{ 'general.wishlist' | t }}</a></li>
+      {%- endif -%}
+    </ul>
+  </nav>
+</dialog>
+
+<dialog class="dialog dialog--search" id="search-dialog" aria-label="{{ 'general.search' | t }}">
+  <div class="page">
+    <form action="{{ routes.search_url }}" method="get" role="search" class="search-form" data-predictive-form>
+      <label class="visually-hidden" for="search-input">{{ 'general.search' | t }}</label>
+      {% render 'icon', name: 'search' %}
+      <input class="search-form__input" id="search-input" type="search" name="q" placeholder="{{ 'search.placeholder' | t }}" autocomplete="off" autocapitalize="off" spellcheck="false" aria-controls="predictive-results">
+      <input type="hidden" name="type" value="product">
+      <button type="button" class="dialog__close dialog__close--inline" data-dialog-close aria-label="{{ 'general.close' | t }}">{% render 'icon', name: 'close' %}</button>
+    </form>
+    <div id="predictive-results" class="predictive" data-predictive-results aria-live="polite"></div>
+    {%- if section.settings.search_menu != blank -%}
+      <div class="search-suggest">
+        <p class="label">{{ 'search.popular' | t }}</p>
+        <ul role="list">
+          {%- for link in linklists[section.settings.search_menu].links -%}
+            <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+          {%- endfor -%}
+        </ul>
+      </div>
+    {%- endif -%}
+  </div>
+</dialog>
+
+{% schema %}
+{
+  "name": "Üst menü",
+  "class": "section-header",
+  "settings": [
+    { "type": "link_list", "id": "menu", "label": "Ana menü", "default": "main-menu", "info": "Alt bağlantıları olan menü öğeleri geniş açılır menü olarak gösterilir." },
+    { "type": "link_list", "id": "search_menu", "label": "Aramada önerilen bağlantılar" },
+    { "type": "page", "id": "wishlist_page", "label": "Favoriler sayfası", "info": "Şablonu \"wishlist\" olan sayfayı seçin." }
+  ],
+  "blocks": [
+    {
+      "type": "promo",
+      "name": "Menü görseli",
+      "settings": [
+        { "type": "text", "id": "parent", "label": "Hangi menü öğesinde görünsün", "info": "Menü öğesinin adını aynen yazın. Örnek: Giyim" },
+        { "type": "image_picker", "id": "image", "label": "Görsel" },
+        { "type": "text", "id": "caption", "label": "Alt yazı" },
+        { "type": "url", "id": "link", "label": "Bağlantı" }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,25 @@
+{
+  "current": {
+    "color_background": "#E6EBEE",
+    "color_surface": "#DBE2E6",
+    "color_text": "#131A22",
+    "color_muted": "#55606A",
+    "color_line": "#A9B3BB",
+    "color_accent": "#2947D6",
+    "color_on_accent": "#FFFFFF",
+    "color_drop_background": "#1F3BD1",
+    "color_drop_text": "#F4F1E8",
+    "logo_width": 110,
+    "page_width": 1520,
+    "enable_reveal": true,
+    "free_shipping_threshold": 1500,
+    "low_stock_threshold": 4,
+    "installment_count": 3,
+    "show_rating": true,
+    "enable_quick_view": true,
+    "enable_wishlist": true,
+    "cookie_enable": true,
+    "popup_enable": true,
+    "popup_delay": 20
+  }
+}

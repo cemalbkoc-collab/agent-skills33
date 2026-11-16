@@ -1,0 +1,110 @@
+{%- comment -%}
+  Beden tablosu ve beden önerisi penceresi. Parametreler: product, page (isteğe bağlı: mağaza sahibinin kendi tablosu)
+  Tablo türü ürün türünden (product.type) bulunur.
+{%- endcomment -%}
+{%- liquid
+  assign type_handle = product.type | handleize
+  assign kind = ''
+  case type_handle
+    when 'tisort', 'kazak', 'sweatshirt', 'esofman-takimi', 'ceket'
+      assign kind = 'ust'
+      assign head = 'size_guide.col_size,size_guide.col_chest,size_guide.col_length,size_guide.col_sleeve'
+      assign rows = 'XS|50|66|20;S|53|68|21;M|56|70|22;L|59|72|23;XL|62|74|24;XXL|65|76|25'
+    when 'pantolon'
+      assign kind = 'alt'
+      assign head = 'size_guide.col_size,size_guide.col_waist,size_guide.col_hip,size_guide.col_inseam'
+      assign rows = '28|72|94|78;30|76|98|79;32|81|102|80;34|86|106|81;36|91|110|82;38|96|114|82'
+    when 'sneaker', 'bot', 'gunluk-ayakkabi'
+      assign kind = 'ayakkabi'
+      assign head = 'size_guide.col_eu,size_guide.col_foot'
+      assign rows = '36|23,0;37|23,7;38|24,3;39|25,0;40|25,7;41|26,3;42|27,0;43|27,7;44|28,3;45|29,0'
+    when 'yuzuk'
+      assign kind = 'yuzuk'
+      assign head = 'size_guide.col_size,size_guide.col_circumference,size_guide.col_diameter'
+      assign rows = '10|50|15,9;12|52|16,6;14|54|17,2;16|56|17,8;18|58|18,5;20|60|19,1;22|62|19,7'
+    when 'bilezik'
+      assign kind = 'bilezik'
+      assign head = 'size_guide.col_size,size_guide.col_wrist,size_guide.col_bracelet'
+      assign rows = 'S|14-15,5|16;M|16-17,5|18;L|18-19,5|20'
+    when 'kolye'
+      assign head = 'size_guide.col_length,size_guide.col_falls'
+      assign rows = '45 cm|size_guide.falls_collar;50 cm|size_guide.falls_upper;60 cm|size_guide.falls_mid'
+    when 'sapka'
+      assign head = 'size_guide.col_size,size_guide.col_head'
+      assign rows = 'S/M|55-57;L/XL|58-60'
+  endcase
+-%}
+{%- if page != blank or rows != blank -%}
+  <button type="button" class="link-plain size-guide-open" data-dialog-open="size-guide" aria-haspopup="dialog">
+    {% render 'icon', name: 'ruler' %}{{ 'size_guide.title' | t }}
+  </button>
+  <dialog class="dialog dialog--guide" id="size-guide" aria-labelledby="size-guide-title">
+    <button type="button" class="dialog__close" data-dialog-close aria-label="{{ 'general.close' | t }}">{% render 'icon', name: 'close' %}</button>
+    <div class="dialog__body">
+      <h2 class="h3" id="size-guide-title">{{ 'size_guide.title' | t }}: {{ product.type }}</h2>
+      {%- if page != blank -%}
+        <div class="rte">{{ page.content }}</div>
+      {%- else -%}
+        <div class="table-wrap" tabindex="0" role="region" aria-label="{{ 'size_guide.title' | t }}">
+          <table class="size-table">
+            <thead>
+              <tr>
+                {%- assign head_keys = head | split: ',' -%}
+                {%- for key in head_keys -%}<th scope="col">{{ key | t }}</th>{%- endfor -%}
+              </tr>
+            </thead>
+            <tbody>
+              {%- assign row_list = rows | split: ';' -%}
+              {%- for row in row_list -%}
+                {%- assign cells = row | split: '|' -%}
+                <tr>
+                  {%- for cell in cells -%}
+                    {%- if forloop.first -%}
+                      <th scope="row">{{ cell }}</th>
+                    {%- elsif cell contains 'size_guide.' -%}
+                      <td>{{ cell | t }}</td>
+                    {%- else -%}
+                      <td>{{ cell }}</td>
+                    {%- endif -%}
+                  {%- endfor -%}
+                </tr>
+              {%- endfor -%}
+            </tbody>
+          </table>
+        </div>
+        <p class="fine">{{ 'size_guide.unit_note' | t }}</p>
+      {%- endif -%}
+
+      {%- if kind != blank -%}
+        <form class="size-finder" data-size-finder="{{ kind }}">
+          <h3 class="label">{{ 'size_guide.finder' | t }}</h3>
+          {%- case kind -%}
+            {%- when 'ust', 'alt' -%}
+              <div class="size-finder__row">
+                <p><label for="sf-height">{{ 'size_guide.height' | t }}</label><input class="field" id="sf-height" name="height" type="number" inputmode="numeric" min="140" max="215" required></p>
+                <p><label for="sf-weight">{{ 'size_guide.weight' | t }}</label><input class="field" id="sf-weight" name="weight" type="number" inputmode="numeric" min="40" max="160" required></p>
+                <p><label for="sf-fit">{{ 'size_guide.fit' | t }}</label>
+                  <select class="field" id="sf-fit" name="fit">
+                    <option value="-1">{{ 'size_guide.fit_slim' | t }}</option>
+                    <option value="0" selected>{{ 'size_guide.fit_regular' | t }}</option>
+                    <option value="1">{{ 'size_guide.fit_loose' | t }}</option>
+                  </select>
+                </p>
+              </div>
+            {%- when 'ayakkabi' -%}
+              <p><label for="sf-foot">{{ 'size_guide.foot_length' | t }}</label><input class="field" id="sf-foot" name="foot" type="number" inputmode="decimal" step="0.1" min="21" max="31" required></p>
+              <p class="fine">{{ 'size_guide.foot_help' | t }}</p>
+            {%- when 'yuzuk' -%}
+              <p><label for="sf-finger">{{ 'size_guide.finger' | t }}</label><input class="field" id="sf-finger" name="finger" type="number" inputmode="numeric" min="44" max="68" required></p>
+              <p class="fine">{{ 'size_guide.finger_help' | t }}</p>
+            {%- when 'bilezik' -%}
+              <p><label for="sf-wrist">{{ 'size_guide.wrist' | t }}</label><input class="field" id="sf-wrist" name="wrist" type="number" inputmode="decimal" step="0.5" min="12" max="22" required></p>
+          {%- endcase -%}
+          <button type="submit" class="btn-solid btn-solid--small">{{ 'size_guide.calculate' | t }}</button>
+          <p class="size-finder__result" data-size-result role="status" hidden></p>
+          <p class="fine">{{ 'size_guide.estimate_note' | t }}</p>
+        </form>
+      {%- endif -%}
+    </div>
+  </dialog>
+{%- endif -%}

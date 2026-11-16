@@ -1,0 +1,43 @@
+<section class="page accountpage">
+  <header class="accountpage__head">
+    <h1 class="h1">{{ 'customer.hello' | t: name: customer.first_name }}</h1>
+    <a class="link-plain" href="{{ routes.account_logout_url }}">{{ 'customer.logout' | t }}</a>
+  </header>
+  <div class="accountpage__grid">
+    <div>
+      <h2 class="label">{{ 'customer.orders' | t }}</h2>
+      {%- paginate customer.orders by 20 -%}
+        {%- if customer.orders.size > 0 -%}
+          <div class="table-wrap" tabindex="0" role="region" aria-label="{{ 'customer.orders' | t }}">
+            <table class="size-table">
+              <thead><tr><th scope="col">{{ 'customer.order' | t }}</th><th scope="col">{{ 'customer.date' | t }}</th><th scope="col">{{ 'customer.status' | t }}</th><th scope="col">{{ 'customer.total' | t }}</th></tr></thead>
+              <tbody>
+                {%- for order in customer.orders -%}
+                  <tr>
+                    <th scope="row"><a class="link-plain" href="{{ order.customer_url }}">{{ order.name }}</a></th>
+                    <td>{{ order.created_at | date: '%d.%m.%Y' }}</td>
+                    <td>{{ order.fulfillment_status_label }}</td>
+                    <td>{{ order.total_net_amount | money }}</td>
+                  </tr>
+                {%- endfor -%}
+              </tbody>
+            </table>
+          </div>
+        {%- else -%}
+          <p class="muted">{{ 'customer.no_orders' | t }}</p>
+        {%- endif -%}
+      {%- endpaginate -%}
+    </div>
+    <aside>
+      <h2 class="label">{{ 'customer.address' | t }}</h2>
+      {%- if customer.default_address -%}
+        <address class="accountpage__address">{{ customer.default_address | format_address }}</address>
+      {%- endif -%}
+      <a class="link-stitch" href="{{ routes.account_addresses_url }}">{{ 'customer.manage_addresses' | t: count: customer.addresses_count }}</a>
+    </aside>
+  </div>
+</section>
+
+{% schema %}
+{ "name": "Hesabım", "settings": [] }
+{% endschema %}

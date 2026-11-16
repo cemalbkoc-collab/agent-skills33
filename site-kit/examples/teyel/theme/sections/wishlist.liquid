@@ -1,0 +1,21 @@
+<section class="page wishlist">
+  <header class="textpage__head">
+    <h1 class="h1">{{ section.settings.heading | default: page.title }}</h1>
+    <p class="muted">{{ section.settings.text }}</p>
+  </header>
+  <ul class="grid" role="list" data-wishlist-list aria-live="polite"></ul>
+  <div class="empty-state" data-wishlist-empty hidden>
+    <p class="h3">{{ 'wishlist.empty' | t }}</p>
+    <a class="link-stitch" href="{{ routes.all_products_collection_url }}">{{ 'cart.empty_cta' | t }}{% render 'icon', name: 'arrow' %}</a>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Favoriler",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Başlık", "default": "Favorilerin" },
+    { "type": "text", "id": "text", "label": "Açıklama", "default": "Kalbe dokunduğun parçalar burada durur. Liste bu cihazda saklanır." }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,21 @@
+{%- comment -%}
+  Renk adından renk kodu bulur ve style özelliği olarak yazar. Parametre: value (seçenek değeri nesnesi ya da metin)
+  Önce Shopify'daki renk kutucuğuna, sonra Tema ayarları > Renkler > Renk kutucukları listesine bakar.
+{%- endcomment -%}
+{%- liquid
+  assign swatch_color = ''
+  assign swatch_name = value.name | default: value
+  if value.swatch.color
+    assign swatch_color = value.swatch.color
+  else
+    assign map_lines = settings.color_map | newline_to_br | split: '<br />'
+    for line in map_lines
+      assign pair = line | strip | split: ':'
+      if pair.first == swatch_name
+        assign swatch_color = pair.last | strip
+        break
+      endif
+    endfor
+  endif
+-%}
+{%- if swatch_color != blank -%}style="--swatch: {{ swatch_color }}"{%- endif -%}

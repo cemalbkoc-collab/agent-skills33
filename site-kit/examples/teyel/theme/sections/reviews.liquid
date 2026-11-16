@@ -1,0 +1,45 @@
+<section class="section reviews" aria-labelledby="rv-{{ section.id }}">
+  <div class="page">
+    <div class="section__head" data-reveal>
+      <h2 class="h2" id="rv-{{ section.id }}">{{ section.settings.heading }}</h2>
+      {%- if section.settings.note != blank -%}<p class="label">{{ section.settings.note }}</p>{%- endif -%}
+    </div>
+    <ul class="reviews__list" role="list">
+      {%- for block in section.blocks -%}
+        <li class="review" {{ block.shopify_attributes }} data-sc-in data-reveal>
+          <p class="review__stars" role="img" aria-label="{{ 'reviews.stars' | t: count: block.settings.rating }}">
+            {%- for i in (1..5) -%}
+              <span{% if i > block.settings.rating %} class="is-off"{% endif %}>{% render 'icon', name: 'star' %}</span>
+            {%- endfor -%}
+          </p>
+          <blockquote class="review__text">{{ block.settings.text }}</blockquote>
+          <p class="review__by">{{ block.settings.author }}{% if block.settings.product != blank %} · <a href="{{ block.settings.product.url }}">{{ block.settings.product.title }}</a>{% endif %}</p>
+        </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Müşteri yorumları",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Başlık", "default": "Giyenler ne diyor" },
+    { "type": "text", "id": "note", "label": "Küçük not", "info": "Demo mağazada yorumların örnek olduğunu belirtmek için kullanın.", "default": "Örnek yorumlar" }
+  ],
+  "blocks": [
+    {
+      "type": "review",
+      "name": "Yorum",
+      "settings": [
+        { "type": "range", "id": "rating", "label": "Puan", "min": 1, "max": 5, "step": 1, "default": 5 },
+        { "type": "textarea", "id": "text", "label": "Yorum", "default": "Kumaşı beklediğimden kalın, kalıbı tam. İkincisini aldım." },
+        { "type": "text", "id": "author", "label": "İsim", "default": "Deniz A." },
+        { "type": "product", "id": "product", "label": "Ürün" }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [ { "name": "Müşteri yorumları", "blocks": [ { "type": "review" }, { "type": "review" }, { "type": "review" } ] } ]
+}
+{% endschema %}

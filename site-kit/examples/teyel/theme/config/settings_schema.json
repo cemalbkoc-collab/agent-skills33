@@ -1,0 +1,79 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "Teyel",
+    "theme_version": "1.0.0",
+    "theme_author": "Teyel Atölye",
+    "theme_documentation_url": "https://help.shopify.com/tr/manual/online-store/themes",
+    "theme_support_url": "https://help.shopify.com/tr"
+  },
+  {
+    "name": "Renkler",
+    "settings": [
+      { "type": "header", "content": "Ana renkler" },
+      { "type": "color", "id": "color_background", "label": "Sayfa zemini (kâğıt)", "default": "#E6EBEE" },
+      { "type": "color", "id": "color_surface", "label": "İkinci zemin (tül)", "default": "#DBE2E6" },
+      { "type": "color", "id": "color_text", "label": "Yazı (mürekkep)", "default": "#131A22" },
+      { "type": "color", "id": "color_muted", "label": "İkincil yazı (kurşun)", "default": "#55606A" },
+      { "type": "color", "id": "color_line", "label": "Çizgiler", "default": "#A9B3BB" },
+      { "type": "color", "id": "color_accent", "label": "Vurgu (kobalt teyel)", "default": "#2947D6" },
+      { "type": "color", "id": "color_on_accent", "label": "Vurgu üstü yazı", "default": "#FFFFFF" },
+      { "type": "header", "content": "Drop sayfaları" },
+      { "type": "color", "id": "color_drop_background", "label": "Drop zemini", "default": "#1F3BD1" },
+      { "type": "color", "id": "color_drop_text", "label": "Drop yazısı", "default": "#F4F1E8" },
+      {
+        "type": "textarea",
+        "id": "color_map",
+        "label": "Renk kutucukları",
+        "info": "Her satıra bir renk yazın: Renk adı:#kod. Ürün sayfasındaki renk seçici bu listeyi kullanır.",
+        "default": "Kırık Beyaz:#ECE8DF\nLacivert:#1B2440\nTaş Grisi:#A9ABA8\nKobalt:#2947D6\nSiyah:#1A1B1D\nAntrasit:#3A3D42\nGri Melanj:#9A9EA3\nHam İndigo:#2C3A5C\nKum:#CFC4B0\nGümüş:#C9CDD1\nAltın:#D4B26A\nOksitli Gümüş:#4A4C50\nRoz Altın:#D9A893\nİnci:#EFEDE6\nKoyu Gri:#5A5D61"
+      }
+    ]
+  },
+  {
+    "name": "Logo ve genel",
+    "settings": [
+      { "type": "image_picker", "id": "logo", "label": "Logo görseli", "info": "Boş bırakılırsa mağaza adı yazı olarak gösterilir." },
+      { "type": "range", "id": "logo_width", "label": "Logo genişliği", "min": 60, "max": 240, "step": 10, "unit": "px", "default": 110 },
+      { "type": "image_picker", "id": "favicon", "label": "Tarayıcı simgesi (favicon)" },
+      { "type": "range", "id": "page_width", "label": "Sayfa genişliği", "min": 1200, "max": 1680, "step": 40, "unit": "px", "default": 1520 },
+      { "type": "checkbox", "id": "enable_reveal", "label": "Kaydırırken beliren öğeler", "info": "Ziyaretçinin cihazında hareket azaltma açıksa otomatik kapanır.", "default": true }
+    ]
+  },
+  {
+    "name": "Mağaza",
+    "settings": [
+      { "type": "number", "id": "free_shipping_threshold", "label": "Ücretsiz kargo alt sınırı (TL)", "info": "0 yazarsanız çubuk gizlenir.", "default": 1500 },
+      { "type": "range", "id": "low_stock_threshold", "label": "Stok azaldı uyarısı eşiği", "min": 0, "max": 10, "step": 1, "unit": "ad.", "default": 4 },
+      { "type": "range", "id": "installment_count", "label": "Gösterilecek taksit sayısı", "info": "Yalnızca bilgi amaçlıdır; gerçek taksit oranını ödeme sağlayıcınız belirler. 1 seçerseniz gizlenir.", "min": 1, "max": 12, "step": 1, "default": 3 },
+      { "type": "checkbox", "id": "show_rating", "label": "Ürün kartında puanı göster", "default": true },
+      { "type": "checkbox", "id": "enable_quick_view", "label": "Hızlı bakış", "default": true },
+      { "type": "checkbox", "id": "enable_wishlist", "label": "Favori listesi", "default": true }
+    ]
+  },
+  {
+    "name": "Sosyal medya",
+    "settings": [
+      { "type": "text", "id": "social_instagram", "label": "Instagram bağlantısı" },
+      { "type": "text", "id": "social_tiktok", "label": "TikTok bağlantısı" },
+      { "type": "text", "id": "social_youtube", "label": "YouTube bağlantısı" }
+    ]
+  },
+  {
+    "name": "Çerez bandı",
+    "settings": [
+      { "type": "checkbox", "id": "cookie_enable", "label": "Çerez izin bandını göster", "default": true },
+      { "type": "textarea", "id": "cookie_text", "label": "Metin", "default": "Sitenin çalışması için zorunlu çerezleri kullanıyoruz. İzin verirsen ölçüm ve pazarlama çerezlerini de kullanırız." },
+      { "type": "url", "id": "cookie_policy_link", "label": "Çerez politikası sayfası" }
+    ]
+  },
+  {
+    "name": "Bülten penceresi",
+    "settings": [
+      { "type": "checkbox", "id": "popup_enable", "label": "Bülten penceresini göster", "info": "Ziyaretçi kapatırsa 30 gün tekrar gösterilmez.", "default": true },
+      { "type": "range", "id": "popup_delay", "label": "Kaç saniye sonra açılsın", "min": 5, "max": 60, "step": 5, "unit": "sn", "default": 20 },
+      { "type": "text", "id": "popup_heading", "label": "Başlık", "default": "Drop'tan önce haberin olsun" },
+      { "type": "textarea", "id": "popup_text", "label": "Metin", "default": "Yeni drop'lar bültene bir gün erken düşer. Ayda en fazla iki e-posta." }
+    ]
+  }
+]

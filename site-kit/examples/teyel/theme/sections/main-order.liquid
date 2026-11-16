@@ -1,0 +1,34 @@
+<section class="page accountpage">
+  <header class="accountpage__head">
+    <h1 class="h1">{{ 'customer.order' | t }} {{ order.name }}</h1>
+    <a class="link-plain" href="{{ routes.account_url }}">{{ 'customer.back' | t }}</a>
+  </header>
+  <p class="muted">{{ order.created_at | date: '%d.%m.%Y %H:%M' }}{% if order.cancelled %} · {{ 'customer.cancelled' | t }}{% endif %}</p>
+  <div class="table-wrap" tabindex="0" role="region" aria-label="{{ 'customer.order' | t }}">
+    <table class="size-table">
+      <thead><tr><th scope="col">{{ 'customer.product' | t }}</th><th scope="col">{{ 'cart.quantity' | t }}</th><th scope="col">{{ 'customer.total' | t }}</th></tr></thead>
+      <tbody>
+        {%- for item in order.line_items -%}
+          <tr>
+            <th scope="row"><a class="link-plain" href="{{ item.product.url }}">{{ item.title }}</a>{% if item.fulfillment %}<br><span class="fine">{{ item.fulfillment.tracking_company }} {{ item.fulfillment.tracking_number }}</span>{% endif %}</th>
+            <td>{{ item.quantity }}</td>
+            <td>{{ item.final_line_price | money }}</td>
+          </tr>
+        {%- endfor -%}
+      </tbody>
+      <tfoot>
+        <tr><th scope="row">{{ 'cart.subtotal' | t }}</th><td></td><td>{{ order.line_items_subtotal_price | money }}</td></tr>
+        {%- for line in order.shipping_methods -%}<tr><th scope="row">{{ line.title }}</th><td></td><td>{{ line.price | money }}</td></tr>{%- endfor -%}
+        <tr><th scope="row">{{ 'customer.total' | t }}</th><td></td><td>{{ order.total_net_amount | money }}</td></tr>
+      </tfoot>
+    </table>
+  </div>
+  <div class="accountpage__grid">
+    <div><h2 class="label">{{ 'customer.billing' | t }}</h2><address class="accountpage__address">{{ order.billing_address | format_address }}</address></div>
+    <div><h2 class="label">{{ 'customer.shipping' | t }}</h2><address class="accountpage__address">{{ order.shipping_address | format_address }}</address></div>
+  </div>
+</section>
+
+{% schema %}
+{ "name": "Sipariş", "settings": [] }
+{% endschema %}

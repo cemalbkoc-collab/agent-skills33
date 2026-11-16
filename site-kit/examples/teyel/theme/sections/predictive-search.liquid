@@ -1,0 +1,26 @@
+{%- comment -%} Arama penceresindeki anlık öneriler. Tarayıcı bunu section_id=predictive-search ile çeker. {%- endcomment -%}
+<div data-predictive>
+  {%- if predictive_search.performed -%}
+    {%- assign items = predictive_search.resources.products -%}
+    {%- if items.size > 0 -%}
+      <p class="label">{{ 'search.products' | t }}</p>
+      <ul class="predictive__list" role="list">
+        {%- for product in items -%}
+          <li>
+            <a class="predictive__item" href="{{ product.url }}">
+              {%- if product.featured_media -%}<img src="{{ product.featured_media | image_url: width: 160 }}" width="64" height="64" loading="lazy" alt="">{%- endif -%}
+              <span>{{ product.title }}</span>
+              <span class="price">{{ product.price | money }}</span>
+            </a>
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+    {%- for collection in predictive_search.resources.collections limit: 3 -%}
+      {%- if forloop.first -%}<p class="label">{{ 'search.collections' | t }}</p><ul class="predictive__chips" role="list">{%- endif -%}
+      <li><a href="{{ collection.url }}">{{ collection.title }}</a></li>
+      {%- if forloop.last -%}</ul>{%- endif -%}
+    {%- endfor -%}
+    <a class="link-stitch" href="{{ routes.search_url }}?q={{ predictive_search.terms | url_encode }}&type=product">{{ 'search.see_all' | t: terms: predictive_search.terms }}{% render 'icon', name: 'arrow' %}</a>
+  {%- endif -%}
+</div>

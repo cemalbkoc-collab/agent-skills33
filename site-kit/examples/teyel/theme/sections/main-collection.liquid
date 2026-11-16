@@ -1,0 +1,178 @@
+{%- liquid
+  assign is_drop = section.settings.drop_mode
+  assign sort_by = collection.sort_by | default: collection.default_sort_by
+  assign active_count = 0
+  for filter in collection.filters
+    assign active_count = active_count | plus: filter.active_values.size
+    if filter.type == 'price_range'
+      if filter.min_value.value != blank or filter.max_value.value != blank
+        assign active_count = active_count | plus: 1
+      endif
+    endif
+  endfor
+-%}
+<div data-collection data-section="{{ section.id }}">
+  {%- if is_drop -%}
+    <header class="drop drop--header">
+      <div class="drop__inner page">
+        <div class="drop__text">
+          <h1 class="drop__title">{{ collection.title }}</h1>
+          {%- if collection.description != blank -%}<div class="drop__sub rte">{{ collection.description }}</div>{%- endif -%}
+          {%- if section.settings.drop_date != blank -%}
+            <div class="countdown" data-countdown="{{ section.settings.drop_date }}" role="timer" aria-label="{{ 'drop.countdown_label' | t }}">
+              <span><b data-cd="d">00</b><small>{{ 'drop.days' | t }}</small></span>
+              <span><b data-cd="h">00</b><small>{{ 'drop.hours' | t }}</small></span>
+              <span><b data-cd="m">00</b><small>{{ 'drop.minutes' | t }}</small></span>
+              <span><b data-cd="s">00</b><small>{{ 'drop.seconds' | t }}</small></span>
+            </div>
+            <p class="drop__live" data-countdown-done hidden>{{ 'drop.live' | t }}</p>
+          {%- endif -%}
+          {%- if section.settings.drop_note != blank -%}<p class="label">{{ section.settings.drop_note }}</p>{%- endif -%}
+        </div>
+        {%- if collection.image -%}
+          <div class="drop__media">
+            <img src="{{ collection.image | image_url: width: 900 }}" width="{{ collection.image.width }}" height="{{ collection.image.height }}" loading="eager" alt="{{ collection.image.alt | escape }}">
+          </div>
+        {%- endif -%}
+      </div>
+    </header>
+  {%- else -%}
+    <header class="collection-head page">
+      <nav class="crumbs" aria-label="{{ 'general.breadcrumb' | t }}">
+        <a href="{{ routes.root_url }}">{{ 'general.home' | t }}</a><span aria-hidden="true">/</span><span aria-current="page">{{ collection.title }}</span>
+      </nav>
+      <h1 class="h1">{{ collection.title }}</h1>
+      {%- if collection.description != blank -%}<div class="collection-head__desc rte muted">{{ collection.description }}</div>{%- endif -%}
+    </header>
+  {%- endif -%}
+
+  <div class="page">
+    <div class="toolbar">
+      <button type="button" class="toolbar__btn" data-drawer-open="filter-drawer" aria-controls="filter-drawer" aria-expanded="false">
+        {% render 'icon', name: 'filter' %}{{ 'collection.filter' | t }}{% if active_count > 0 %} ({{ active_count }}){% endif %}
+      </button>
+      <p class="label toolbar__count" aria-live="polite">{{ 'collection.products_count' | t: count: collection.products_count }}</p>
+      <form class="toolbar__sort" data-sort-form>
+        <label class="label" for="sort-by">{{ 'collection.sort' | t }}</label>
+        <select class="toolbar__select" id="sort-by" name="sort_by" data-sort>
+          {%- for option in collection.sort_options -%}
+            <option value="{{ option.value | escape }}"{% if option.value == sort_by %} selected{% endif %}>{{ option.name | escape }}</option>
+          {%- endfor -%}
+        </select>
+      </form>
+    </div>
+
+    {%- if active_count > 0 -%}
+      <ul class="active-filters" role="list">
+        {%- for filter in collection.filters -%}
+          {%- for value in filter.active_values -%}
+            <li><a class="active-filters__chip" href="{{ value.url_to_remove }}" data-filter-link>{{ value.label | escape }}{% render 'icon', name: 'close' %}<span class="visually-hidden">{{ 'collection.remove_filter' | t }}</span></a></li>
+          {%- endfor -%}
+          {%- if filter.type == 'price_range' -%}
+            {%- if filter.min_value.value != blank or filter.max_value.value != blank -%}
+              <li><a class="active-filters__chip" href="{{ filter.url_to_remove }}" data-filter-link>{{ filter.label | escape }}{% render 'icon', name: 'close' %}<span class="visually-hidden">{{ 'collection.remove_filter' | t }}</span></a></li>
+            {%- endif -%}
+          {%- endif -%}
+        {%- endfor -%}
+        <li><a class="link-plain" href="{{ collection.url }}?sort_by={{ sort_by }}" data-filter-link>{{ 'collection.clear' | t }}</a></li>
+      </ul>
+    {%- endif -%}
+
+    {%- paginate collection.products by section.settings.per_page -%}
+      {%- if collection.products.size == 0 -%}
+        <div class="empty-state">
+          <p class="h3">{{ 'collection.no_products' | t }}</p>
+          <a class="link-stitch" href="{{ collection.url }}" data-filter-link>{{ 'collection.clear' | t }}</a>
+        </div>
+      {%- else -%}
+        <h2 class="visually-hidden">{{ 'collection.products_heading' | t }}</h2>
+        <ul class="grid grid--collection" role="list" id="product-grid">
+          {%- for product in collection.products -%}
+            <li data-reveal>
+              {%- if forloop.index <= 4 -%}
+                {% render 'product-card', product: product, eager: true %}
+              {%- else -%}
+                {% render 'product-card', product: product %}
+              {%- endif -%}
+            </li>
+          {%- endfor -%}
+        </ul>
+        {%- if paginate.pages > 1 -%}
+          <nav class="pagination" aria-label="{{ 'general.pagination' | t }}">
+            {%- if paginate.previous -%}
+              <a class="link-stitch" href="{{ paginate.previous.url }}" rel="prev">{{ 'general.previous' | t }}</a>
+            {%- endif -%}
+            <span class="label">{{ 'general.page_of' | t: current: paginate.current_page, total: paginate.pages }}</span>
+            {%- if paginate.next -%}
+              <a class="link-stitch" href="{{ paginate.next.url }}" rel="next">{{ 'general.next' | t }}</a>
+            {%- endif -%}
+          </nav>
+        {%- endif -%}
+      {%- endif -%}
+    {%- endpaginate -%}
+  </div>
+
+  <dialog class="drawer drawer--left" id="filter-drawer" aria-labelledby="filter-drawer-title">
+    <div class="drawer__head">
+      <h2 class="label" id="filter-drawer-title">{{ 'collection.filters_title' | t }}</h2>
+      <button type="button" class="drawer__close" data-dialog-close aria-label="{{ 'general.close' | t }}">{% render 'icon', name: 'close' %}</button>
+    </div>
+    <form class="drawer__body facets" action="{{ collection.url }}" method="get" data-facets>
+      <input type="hidden" name="sort_by" value="{{ sort_by }}">
+      {%- for filter in collection.filters -%}
+        <details class="accordion facets__group"{% if forloop.index <= 3 or filter.active_values.size > 0 %} open{% endif %}>
+          <summary><span>{{ filter.label | escape }}</span>{% render 'icon', name: 'plus' %}</summary>
+          <div class="accordion__body">
+            {%- case filter.type -%}
+              {%- when 'list', 'boolean' -%}
+                {%- assign is_color = false -%}
+                {%- if filter.label == 'Renk' or filter.label == 'Color' -%}{%- assign is_color = true -%}{%- endif -%}
+                <ul class="facets__list{% if is_color %} facets__list--color{% endif %}" role="list">
+                  {%- for value in filter.values -%}
+                    <li>
+                      <label class="check{% if value.count == 0 and value.active == false %} is-disabled{% endif %}">
+                        <input type="checkbox" name="{{ value.param_name }}" value="{{ value.value | escape }}"{% if value.active %} checked{% endif %}{% if value.count == 0 and value.active == false %} disabled{% endif %}>
+                        {%- if is_color -%}<span class="swatch swatch--small" {% render 'swatch', value: value.label %}></span>{%- endif -%}
+                        <span>{{ value.label | escape }}</span>
+                        <span class="muted">({{ value.count }})</span>
+                      </label>
+                    </li>
+                  {%- endfor -%}
+                </ul>
+              {%- when 'price_range' -%}
+                <div class="facets__price">
+                  <p>
+                    <label for="price-min">{{ 'collection.price_from' | t }}</label>
+                    <input class="field" id="price-min" type="number" inputmode="numeric" name="{{ filter.min_value.param_name }}" min="0" placeholder="0"{% if filter.min_value.value %} value="{{ filter.min_value.value | divided_by: 100 }}"{% endif %}>
+                  </p>
+                  <p>
+                    <label for="price-max">{{ 'collection.price_to' | t }}</label>
+                    <input class="field" id="price-max" type="number" inputmode="numeric" name="{{ filter.max_value.param_name }}" min="0" placeholder="{{ filter.range_max | divided_by: 100 | ceil }}"{% if filter.max_value.value %} value="{{ filter.max_value.value | divided_by: 100 }}"{% endif %}>
+                  </p>
+                </div>
+            {%- endcase -%}
+          </div>
+        </details>
+      {%- else -%}
+        <p class="muted">{{ 'collection.no_filters' | t }}</p>
+      {%- endfor -%}
+      <div class="facets__actions">
+        <button type="submit" class="btn-solid">{{ 'collection.show_results' | t }}</button>
+        <a class="link-plain" href="{{ collection.url }}?sort_by={{ sort_by }}" data-filter-link>{{ 'collection.clear' | t }}</a>
+      </div>
+    </form>
+  </dialog>
+</div>
+
+{% schema %}
+{
+  "name": "Koleksiyon ürünleri",
+  "settings": [
+    { "type": "range", "id": "per_page", "label": "Sayfa başına ürün", "min": 8, "max": 48, "step": 4, "default": 24 },
+    { "type": "header", "content": "Drop görünümü" },
+    { "type": "checkbox", "id": "drop_mode", "label": "Drop başlığını kullan", "info": "Kobalt zemin, dev başlık ve geri sayım.", "default": false },
+    { "type": "text", "id": "drop_date", "label": "Geri sayım tarihi", "info": "Şu biçimde yazın: 2026-12-18T20:00:00+03:00. Boş bırakılırsa sayaç gizlenir." },
+    { "type": "text", "id": "drop_note", "label": "Küçük not", "default": "Sınırlı adet. Bitince tekrarı yok." }
+  ]
+}
+{% endschema %}

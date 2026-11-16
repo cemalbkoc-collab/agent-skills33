@@ -1,0 +1,33 @@
+<section class="page authpage">
+  <div class="authpage__card" id="login">
+    <h1 class="h1">{{ 'customer.login_title' | t }}</h1>
+    {%- form 'customer_login', class: 'authpage__form', id: 'customer-login' -%}
+      {%- if form.errors -%}<p class="form-note form-note--error" role="alert">{{ form.errors | default_errors }}</p>{%- endif -%}
+      <p><label for="login-email">{{ 'customer.email' | t }}</label><input class="field" id="login-email" type="email" name="customer[email]" autocomplete="email" required></p>
+      <p><label for="login-password">{{ 'customer.password' | t }}</label><input class="field" id="login-password" type="password" name="customer[password]" autocomplete="current-password" required></p>
+      <button type="submit" class="btn-solid">{{ 'customer.sign_in' | t }}</button>
+      <a class="link-plain" href="#recover">{{ 'customer.forgot' | t }}</a>
+    {%- endform -%}
+    <p class="authpage__alt">{{ 'customer.no_account' | t }} <a class="link-stitch" href="{{ routes.account_register_url }}">{{ 'customer.register_title' | t }}</a></p>
+  </div>
+  <div class="authpage__card authpage__card--recover" id="recover">
+    <h2 class="h3">{{ 'customer.recover_title' | t }}</h2>
+    <p class="muted">{{ 'customer.recover_text' | t }}</p>
+    {%- form 'recover_customer_password', class: 'authpage__form', id: 'recover-form' -%}
+      {%- if form.posted_successfully? -%}<p class="form-note form-note--ok" role="status">{{ 'customer.recover_success' | t }}</p>{%- endif -%}
+      <p><label for="recover-email">{{ 'customer.email' | t }}</label><input class="field" id="recover-email" type="email" name="email" autocomplete="email" required></p>
+      <button type="submit" class="btn-line">{{ 'customer.recover_submit' | t }}</button>
+    {%- endform -%}
+  </div>
+  {%- if shop.checkout.guest_login -%}
+    <div class="authpage__card">
+      {%- form 'guest_login', id: 'guest-login' -%}
+        <button type="submit" class="btn-line">{{ 'customer.guest' | t }}</button>
+      {%- endform -%}
+    </div>
+  {%- endif -%}
+</section>
+
+{% schema %}
+{ "name": "Giriş", "settings": [] }
+{% endschema %}

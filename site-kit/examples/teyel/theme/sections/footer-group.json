@@ -1,0 +1,17 @@
+{
+  "type": "footer",
+  "name": "Alt bölüm",
+  "sections": {
+    "footer": {
+      "type": "footer",
+      "blocks": {
+        "shop": { "type": "menu", "settings": { "heading": "Mağaza", "menu": "footer" } },
+        "help": { "type": "menu", "settings": { "heading": "Yardım", "menu": "yardim" } },
+        "legal": { "type": "menu", "settings": { "heading": "Yasal", "menu": "yasal" } }
+      },
+      "block_order": ["shop", "help", "legal"],
+      "settings": { "tagline": "Önce teyel, sonra dikiş.", "show_newsletter": true, "show_payment": true }
+    }
+  },
+  "order": ["footer"]
+}

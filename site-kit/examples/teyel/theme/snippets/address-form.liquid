@@ -1,0 +1,14 @@
+{%- form 'customer_address', address, class: 'authpage__form address-form', id: 'address-form' -%}
+  <div class="address-form__grid">
+    <p><label for="a-first-{{ id_suffix }}">{{ 'customer.first_name' | t }}</label><input class="field" id="a-first-{{ id_suffix }}" name="address[first_name]" value="{{ form.first_name }}" autocomplete="given-name"></p>
+    <p><label for="a-last-{{ id_suffix }}">{{ 'customer.last_name' | t }}</label><input class="field" id="a-last-{{ id_suffix }}" name="address[last_name]" value="{{ form.last_name }}" autocomplete="family-name"></p>
+    <p class="contact__wide"><label for="a-addr1-{{ id_suffix }}">{{ 'customer.address1' | t }}</label><input class="field" id="a-addr1-{{ id_suffix }}" name="address[address1]" value="{{ form.address1 }}" autocomplete="address-line1"></p>
+    <p><label for="a-city-{{ id_suffix }}">{{ 'customer.city' | t }}</label><input class="field" id="a-city-{{ id_suffix }}" name="address[city]" value="{{ form.city }}" autocomplete="address-level2"></p>
+    <p><label for="a-province-{{ id_suffix }}">{{ 'customer.province' | t }}</label><input class="field" id="a-province-{{ id_suffix }}" name="address[province]" value="{{ form.province }}" autocomplete="address-level1"></p>
+    <p><label for="a-zip-{{ id_suffix }}">{{ 'customer.zip' | t }}</label><input class="field" id="a-zip-{{ id_suffix }}" name="address[zip]" value="{{ form.zip }}" autocomplete="postal-code"></p>
+    <p><label for="a-phone-{{ id_suffix }}">{{ 'contact.phone' | t }}</label><input class="field" id="a-phone-{{ id_suffix }}" type="tel" name="address[phone]" value="{{ form.phone }}" autocomplete="tel"></p>
+    <input type="hidden" name="address[country]" value="{{ form.country | default: 'Turkey' }}">
+  </div>
+  <label class="check"><input type="checkbox" name="address[default]" value="1"{% if form.set_as_default_checkbox contains 'checked' %} checked{% endif %}><span>{{ 'customer.set_default' | t }}</span></label>
+  <button type="submit" class="btn-solid btn-solid--small">{{ 'customer.save' | t }}</button>
+{%- endform -%}

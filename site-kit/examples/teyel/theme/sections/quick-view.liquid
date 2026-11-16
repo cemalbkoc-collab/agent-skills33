@@ -1,0 +1,77 @@
+{%- comment -%}
+  Hızlı bakış içeriği. Tarayıcı bu bölümü ürün adresinden ?section_id=quick-view ile çeker.
+{%- endcomment -%}
+{%- liquid
+  assign current = product.selected_or_first_available_variant
+  assign form_id = 'quick-form-' | append: product.id
+-%}
+<div class="quick" data-product data-quick data-url="{{ product.url }}" data-handle="{{ product.handle }}" data-low="{{ settings.low_stock_threshold }}">
+  <div class="quick__media" data-gallery>
+    <div class="gallery-stage">
+      {%- for media in product.media -%}
+        <div class="gallery-stage__item{% if media.id == current.featured_media.id or forloop.first and current.featured_media == blank %} is-active{% endif %}" data-media="{{ media.id }}">
+          <img src="{{ media | image_url: width: 800 }}" width="{{ media.width | default: 1000 }}" height="{{ media.height | default: 1000 }}" loading="lazy" alt="{{ media.alt | default: product.title | escape }}">
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+  <div class="quick__info">
+    <p class="label">{{ product.type }}</p>
+    <h2 class="h3"><a href="{{ product.url }}">{{ product.title }}</a></h2>
+    {% render 'price', product: product, variant: current %}
+    {%- unless product.has_only_default_variant -%}
+      <div class="picker" data-picker>
+        {%- for option in product.options_with_values -%}
+          {%- assign is_color = false -%}
+          {%- if option.name == 'Renk' or option.name == 'Color' -%}{%- assign is_color = true -%}{%- endif -%}
+          <fieldset class="picker__group{% if is_color %} picker__group--color{% endif %}">
+            <legend class="picker__legend"><span class="label">{{ option.name }}</span><span class="picker__current" data-option-current>{{ option.selected_value }}</span></legend>
+            <div class="picker__values">
+              {%- for value in option.values -%}
+                {%- assign input_id = form_id | append: '-' | append: option.position | append: '-' | append: forloop.index -%}
+                <input class="picker__input visually-hidden" type="radio" id="{{ input_id }}" name="{{ option.name | escape }}" value="{{ value | escape }}" form="{{ form_id }}" data-option-index="{{ option.position | minus: 1 }}"{% if option.selected_value == value %} checked{% endif %}>
+                {%- if is_color -%}
+                  <label class="swatch" for="{{ input_id }}" {% render 'swatch', value: value %}><span class="visually-hidden">{{ value }}</span></label>
+                {%- else -%}
+                  <label class="chip" for="{{ input_id }}">{{ value }}</label>
+                {%- endif -%}
+              {%- endfor -%}
+            </div>
+          </fieldset>
+        {%- endfor -%}
+      </div>
+    {%- endunless -%}
+    <p class="stock" data-template="{{ 'product.low_stock' | t: count: '[count]' }}" data-stock hidden><span data-stock-text></span></p>
+    {%- form 'product', product, id: form_id, class: 'buy__form', novalidate: 'novalidate', data-product-form: '' -%}
+      <input type="hidden" name="id" value="{{ current.id }}" data-variant-id>
+      <button type="submit" name="add" class="btn-solid btn-solid--wide" data-add{% unless current.available %} disabled{% endunless %}>
+        <span data-add-label data-text-add="{{ 'product.add_to_cart' | t }}" data-text-sold="{{ 'product.sold_out' | t }}">{% if current.available %}{{ 'product.add_to_cart' | t }}{% else %}{{ 'product.sold_out' | t }}{% endif %}</span>
+        <span class="btn-solid__price" data-add-price>{{ current.price | money }}</span>
+      </button>
+    {%- endform -%}
+    <a class="link-stitch" href="{{ product.url }}">{{ 'product.view_details' | t }}{% render 'icon', name: 'arrow' %}</a>
+  </div>
+  <script type="application/json" data-variants>
+    [
+      {%- for v in product.variants -%}
+        {
+          "id": {{ v.id }},
+          "options": {{ v.options | json }},
+          "available": {{ v.available | json }},
+          "price": {{ v.price }},
+          "compare": {{ v.compare_at_price | default: 0 }},
+          "qty": {% if v.inventory_management %}{{ v.inventory_quantity }}{% else %}null{% endif %},
+          "media": {% if v.featured_media %}{{ v.featured_media.id }}{% else %}null{% endif %},
+          "title": {{ v.title | json }}
+        }{% unless forloop.last %},{% endunless %}
+      {%- endfor -%}
+    ]
+  </script>
+</div>
+
+{% schema %}
+{
+  "name": "Hızlı bakış",
+  "settings": []
+}
+{% endschema %}

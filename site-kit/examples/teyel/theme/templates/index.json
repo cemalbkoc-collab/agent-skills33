@@ -1,0 +1,98 @@
+{
+  "sections": {
+    "hero": {
+      "type": "sc-hero",
+      "settings": {
+        "word": "Ara\nKatman",
+        "kicker": "Kış 26 koleksiyonundan bir bakış",
+        "products": ["kalip-ceket", "pili-pantolon"],
+        "link_label": "Kış 26'yı gör",
+        "link": "shopify://collections/kis-26",
+        "focus_x": 70,
+        "focus_x_mobile": 86,
+        "focus_y": 85,
+        "pivot_x": 77,
+        "pivot_y": 97,
+        "span": 18
+      }
+    },
+    "rack": {
+      "type": "sc-rack",
+      "blocks": {
+        "p1": { "type": "piece", "settings": { "product": "kalip-ceket" } },
+        "p2": { "type": "piece", "settings": { "product": "recme-balikci-yaka-kazak" } },
+        "p3": { "type": "piece", "settings": { "product": "pili-pantolon" } },
+        "p4": { "type": "piece", "settings": { "product": "pens-tisort" } },
+        "p5": { "type": "piece", "settings": { "product": "zincir-runner" } },
+        "p6": { "type": "piece", "settings": { "product": "agraf-chelsea" } },
+        "p7": { "type": "piece", "settings": { "product": "zincir-bilezik" } },
+        "p8": { "type": "piece", "settings": { "product": "kalip-tote" } }
+      },
+      "block_order": ["p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8"],
+      "settings": {
+        "heading": "Askıda",
+        "text": "Bu ay atölyeden çıkan parçalar. Her etikette kumaş, beden aralığı ve fiyat var.",
+        "end_text": "Önce teyel, sonra dikiş.",
+        "collection": "yeni-gelenler"
+      }
+    },
+    "categories": {
+      "type": "category-index",
+      "blocks": {
+        "c1": { "type": "category", "settings": { "title": "Giyim", "link": "shopify://collections/giyim", "menu": "giyim" } },
+        "c2": { "type": "category", "settings": { "title": "Ayakkabı", "link": "shopify://collections/ayakkabi", "menu": "ayakkabi" } },
+        "c3": { "type": "category", "settings": { "title": "Takı ve Aksesuar", "link": "shopify://collections/taki-aksesuar", "menu": "taki-aksesuar" } }
+      },
+      "block_order": ["c1", "c2", "c3"],
+      "settings": { "heading": "Kategoriler" }
+    },
+    "drop": {
+      "type": "drop-countdown",
+      "settings": {
+        "ticker": "Drop 02 · Ham İndigo · 120 adet",
+        "heading": "Drop\n02",
+        "text": "Ham indigo. 120 adet.",
+        "date": "2026-12-18T20:00:00+03:00",
+        "show_form": true,
+        "collection": "drop-01-mavi-teyel",
+        "link_label": "Drop 01'e bak"
+      }
+    },
+    "closeup": {
+      "type": "sc-closeup",
+      "blocks": {
+        "j1": { "type": "product", "settings": { "product": "zincir-bilezik" } },
+        "j2": { "type": "product", "settings": { "product": "muhur-yuzuk" } },
+        "j3": { "type": "product", "settings": { "product": "teyel-kolye" } }
+      },
+      "block_order": ["j1", "j2", "j3"],
+      "settings": {
+        "heading": "Gümüş, sade,\nher güne.",
+        "text": "Yüzük ölçünü bilmiyorsan ürün sayfasındaki ölçü bulucu bir iple iki dakikada buldurur.",
+        "link_label": "Takıları gör",
+        "link": "shopify://collections/taki-aksesuar"
+      }
+    },
+    "reviews": {
+      "type": "reviews",
+      "blocks": {
+        "r1": { "type": "review", "settings": { "rating": 5, "text": "Kumaşı beklediğimden kalın, kalıbı tam. İkincisini aldım.", "author": "Deniz A.", "product": "pens-tisort" } },
+        "r2": { "type": "review", "settings": { "rating": 5, "text": "Ceket üç haftadır üstümden çıkmıyor. Cepler gerçekten işe yarıyor.", "author": "Emre K.", "product": "kalip-ceket" } },
+        "r3": { "type": "review", "settings": { "rating": 4, "text": "Yüzük ölçüsünü rehberle buldum, tam oldu. Kargo iki günde geldi.", "author": "Selin T.", "product": "muhur-yuzuk" } }
+      },
+      "block_order": ["r1", "r2", "r3"],
+      "settings": { "heading": "Giyenler ne diyor", "note": "Örnek yorumlar" }
+    },
+    "plate": {
+      "type": "sc-plate",
+      "blocks": {
+        "f1": { "type": "fact", "settings": { "label": "İçerik", "value": "Drop'lar bir gün erken, yeni parçalar" } },
+        "f2": { "type": "fact", "settings": { "label": "Sıklık", "value": "Ayda en fazla iki e-posta" } },
+        "f3": { "type": "fact", "settings": { "label": "Ayrılmak", "value": "Her e-postanın altında tek tık" } }
+      },
+      "block_order": ["f1", "f2", "f3"],
+      "settings": { "heading": "Liste", "button": "Dik", "success": "Dikiş atıldı. Bir sonraki drop'tan bir gün önce yazacağız." }
+    }
+  },
+  "order": ["hero", "rack", "categories", "drop", "closeup", "reviews", "plate"]
+}

@@ -1,0 +1,22 @@
+<article class="page textpage{% if section.settings.narrow %} textpage--narrow{% endif %}">
+  <header class="textpage__head">
+    {%- if section.settings.kicker != blank -%}<p class="label">{{ section.settings.kicker }}</p>{%- endif -%}
+    <h1 class="h1">{{ page.title }}</h1>
+  </header>
+  {%- if section.settings.draft_note -%}
+    <p class="draft-note" role="note">{{ 'legal.draft_note' | t }}</p>
+  {%- endif -%}
+  <div class="rte textpage__body">{{ page.content }}</div>
+</article>
+
+{% schema %}
+{
+  "name": "Sayfa içeriği",
+  "settings": [
+    { "type": "text", "id": "kicker", "label": "Üst etiket" },
+    { "type": "checkbox", "id": "narrow", "label": "Dar okuma sütunu", "default": true },
+    { "type": "checkbox", "id": "draft_note", "label": "\"Taslak, avukat kontrolü gerekir\" notunu göster", "default": false }
+  ],
+  "presets": [ { "name": "Sayfa içeriği" } ]
+}
+{% endschema %}

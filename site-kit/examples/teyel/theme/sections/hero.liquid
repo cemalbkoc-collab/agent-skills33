@@ -1,0 +1,58 @@
+{%- liquid
+  assign image = section.settings.image
+  assign mobile = section.settings.image_mobile | default: image
+-%}
+<section class="hero hero--{{ section.settings.text_position }}" aria-labelledby="hero-{{ section.id }}">
+  <div class="hero__media">
+    {%- if image != blank -%}
+      <picture>
+        <source media="(max-width: 749px)" srcset="{{ mobile | image_url: width: 750 }} 750w, {{ mobile | image_url: width: 1100 }} 1100w" sizes="100vw">
+        <img
+          src="{{ image | image_url: width: 1600 }}"
+          srcset="{{ image | image_url: width: 1100 }} 1100w, {{ image | image_url: width: 1600 }} 1600w, {{ image | image_url: width: 2400 }} 2400w"
+          sizes="100vw"
+          width="{{ image.width }}"
+          height="{{ image.height }}"
+          loading="eager"
+          fetchpriority="high"
+          alt="{{ image.alt | escape }}"
+        >
+      </picture>
+    {%- else -%}
+      {{ 'hero-apparel-1' | placeholder_svg_tag: 'hero__placeholder' }}
+    {%- endif -%}
+  </div>
+  <div class="hero__text page">
+    {%- if section.settings.kicker != blank -%}
+      <p class="label">{{ section.settings.kicker }}</p>
+    {%- endif -%}
+    <h2 class="hero__title" id="hero-{{ section.id }}">{{ section.settings.heading | newline_to_br }}</h2>
+    {%- if section.settings.text != blank -%}
+      <p class="hero__sub">{{ section.settings.text }}</p>
+    {%- endif -%}
+    {%- if section.settings.button_label != blank -%}
+      <a class="link-stitch link-stitch--large" href="{{ section.settings.button_link | default: routes.all_products_collection_url }}">{{ section.settings.button_label }}{% render 'icon', name: 'arrow' %}</a>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Açılış görseli",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Görsel (masaüstü)", "info": "Yatay, en az 2400 piksel genişlik. Yazı için görselin bir yanında boşluk bırakın." },
+    { "type": "image_picker", "id": "image_mobile", "label": "Görsel (telefon)", "info": "Dikey görsel. Boş bırakılırsa masaüstü görseli kullanılır." },
+    { "type": "text", "id": "kicker", "label": "Üst etiket", "default": "Kış 26 · Ara Katman" },
+    { "type": "textarea", "id": "heading", "label": "Başlık", "default": "Önce teyel,\nsonra dikiş." },
+    { "type": "text", "id": "text", "label": "Alt metin" },
+    { "type": "text", "id": "button_label", "label": "Bağlantı yazısı", "default": "Koleksiyonu gör" },
+    { "type": "url", "id": "button_link", "label": "Bağlantı" },
+    {
+      "type": "select", "id": "text_position", "label": "Yazı konumu",
+      "options": [ { "value": "left", "label": "Sol alt" }, { "value": "right", "label": "Sağ alt" } ],
+      "default": "left"
+    }
+  ],
+  "presets": [ { "name": "Açılış görseli" } ]
+}
+{% endschema %}

@@ -1,0 +1,16 @@
+{
+  "sections": {
+    "main": {
+      "type": "contact-form",
+      "blocks": {
+        "f1": { "type": "fact", "settings": { "label": "E-posta", "value": "merhaba@teyel.example" } },
+        "f2": { "type": "fact", "settings": { "label": "Telefon", "value": "0850 000 00 00 (demo)" } },
+        "f3": { "type": "fact", "settings": { "label": "Atölye", "value": "Kuruçeşme, İstanbul (demo adres)" } },
+        "f4": { "type": "fact", "settings": { "label": "Saatler", "value": "Hafta içi 10.00 - 18.00" } }
+      },
+      "block_order": ["f1", "f2", "f3", "f4"],
+      "settings": { "heading": "Bize yaz", "text": "<p>Beden, sipariş ya da iade, ne olursa yaz. Hafta içi bir iş günü içinde dönüyoruz.</p>" }
+    }
+  },
+  "order": ["main"]
+}

@@ -1,0 +1,47 @@
+<section class="page searchpage">
+  <h1 class="h1">{{ 'search.title' | t }}</h1>
+  <form action="{{ routes.search_url }}" method="get" role="search" class="search-form searchpage__form">
+    <label class="visually-hidden" for="search-page-input">{{ 'general.search' | t }}</label>
+    {% render 'icon', name: 'search' %}
+    <input class="search-form__input" id="search-page-input" type="search" name="q" value="{{ search.terms | escape }}" placeholder="{{ 'search.placeholder' | t }}">
+    <input type="hidden" name="type" value="product">
+    <button type="submit" class="link-stitch">{{ 'general.search' | t }}</button>
+  </form>
+  {%- if search.performed -%}
+    <p class="label searchpage__count" role="status">{{ 'search.results_count' | t: count: search.results_count, terms: search.terms }}</p>
+    {%- paginate search.results by 24 -%}
+      {%- if search.results_count == 0 -%}
+        <div class="empty-state">
+          <p class="h3">{{ 'search.no_results' | t }}</p>
+          <a class="link-stitch" href="{{ routes.all_products_collection_url }}">{{ 'cart.empty_cta' | t }}{% render 'icon', name: 'arrow' %}</a>
+        </div>
+      {%- else -%}
+        <ul class="grid" role="list">
+          {%- for item in search.results -%}
+            <li>
+              {%- if item.object_type == 'product' -%}
+                {% render 'product-card', product: item %}
+              {%- else -%}
+                <article class="card card--text">
+                  <p class="label">{{ item.object_type }}</p>
+                  <h2 class="h3"><a href="{{ item.url }}">{{ item.title }}</a></h2>
+                </article>
+              {%- endif -%}
+            </li>
+          {%- endfor -%}
+        </ul>
+        {%- if paginate.pages > 1 -%}
+          <nav class="pagination" aria-label="{{ 'general.pagination' | t }}">
+            {%- if paginate.previous -%}<a class="link-stitch" href="{{ paginate.previous.url }}" rel="prev">{{ 'general.previous' | t }}</a>{%- endif -%}
+            <span class="label">{{ 'general.page_of' | t: current: paginate.current_page, total: paginate.pages }}</span>
+            {%- if paginate.next -%}<a class="link-stitch" href="{{ paginate.next.url }}" rel="next">{{ 'general.next' | t }}</a>{%- endif -%}
+          </nav>
+        {%- endif -%}
+      {%- endif -%}
+    {%- endpaginate -%}
+  {%- endif -%}
+</section>
+
+{% schema %}
+{ "name": "Arama sonuçları", "settings": [] }
+{% endschema %}

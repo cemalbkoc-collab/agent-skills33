@@ -1,0 +1,48 @@
+{%- comment -%} Yakın plan: kalıp kâğıdı (çizim) ve el kesiği farklı hızlarda kayar. Etiket şeması askıyla aynı. {%- endcomment -%}
+<section class="cu" data-sc-act="flow" aria-labelledby="cu-{{ section.id }}">
+  <div class="cu__media">
+    <svg class="cu__paper" data-sc-parallax="-0.9" viewBox="0 0 600 750" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+      <rect width="600" height="750"/>
+      <path class="cu__chalk" d="M40 120 L300 90 L560 150 M120 90 L150 700 M90 420 C200 380 320 470 520 410 M300 90 Q330 300 270 560 L520 600 M60 640 L540 660"/>
+      <path class="cu__chalk cu__chalk--dash" d="M30 300 C180 250 360 350 590 280"/>
+    </svg>
+    {%- if section.settings.subject != blank -%}
+      <img class="cu__subject" data-sc-parallax="0.7" src="{{ section.settings.subject | image_url: width: 1100 }}" srcset="{{ section.settings.subject | image_url: width: 600 }} 600w, {{ section.settings.subject | image_url: width: 1100 }} 1100w" sizes="(min-width: 990px) 50vw, 100vw" width="{{ section.settings.subject.width }}" height="{{ section.settings.subject.height }}" loading="lazy" alt="{{ section.settings.subject.alt | escape }}">
+    {%- endif -%}
+  </div>
+  <div class="cu__text">
+    <h2 class="h2" id="cu-{{ section.id }}">{{ section.settings.heading | newline_to_br }}</h2>
+    <p class="muted">{{ section.settings.text }}</p>
+    <dl class="cu__list">
+      {%- for block in section.blocks -%}
+        {%- assign product = block.settings.product -%}
+        {%- if product != blank -%}
+          <div {{ block.shopify_attributes }}>
+            <dt><a href="{{ product.url }}">{{ product.title }}</a></dt>
+            <dd>{{ product.metafields.custom.material.value | split: ',' | first }}</dd>
+            <dd class="cu__price">{{ product.price | money }}</dd>
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </dl>
+    {%- if section.settings.link_label != blank -%}
+      <a class="link-stitch" href="{{ section.settings.link | default: routes.all_products_collection_url }}">{{ section.settings.link_label }}{% render 'icon', name: 'arrow' %}</a>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Yakın plan",
+  "settings": [
+    { "type": "image_picker", "id": "subject", "label": "El ya da ürün (şeffaf PNG)" },
+    { "type": "textarea", "id": "heading", "label": "Başlık", "default": "Gümüş, sade,\nher güne." },
+    { "type": "text", "id": "text", "label": "Metin", "default": "Yüzük ölçünü bilmiyorsan ürün sayfasındaki ölçü bulucu bir iple iki dakikada buldurur." },
+    { "type": "text", "id": "link_label", "label": "Bağlantı yazısı", "default": "Takıları gör" },
+    { "type": "url", "id": "link", "label": "Bağlantı" }
+  ],
+  "blocks": [ { "type": "product", "name": "Ürün satırı", "settings": [ { "type": "product", "id": "product", "label": "Ürün" } ] } ],
+  "max_blocks": 4,
+  "presets": [ { "name": "Yakın plan" } ]
+}
+{% endschema %}
