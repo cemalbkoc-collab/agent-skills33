@@ -31,12 +31,15 @@ Not for: editing one component in an existing app (use `frontend-ui-engineering`
    - Bold one-off interface, no strong system yet: `frontend-design`. Palette/type theme for an
      artifact or deck: `theme-factory`. Posters and generative visuals: `canvas-design`,
      `algorithmic-art`. Multi-file React/Tailwind/shadcn artifact: `web-artifacts-builder`.
+   - Need several distinct directions before committing: `oil-ui` (3 side-by-side comparison
+     page). Video or frame sequences that scrub with scroll/pointer: `oil-motion` (feed it our own
+     generated video; its image API needs a key we do not have).
    - Once a page exists, use `impeccable` sub-commands to finish it (`critique`, `audit`,
      `polish`, `bolder` / `quieter`, `typeset`, `layout`, `animate`, `harden`).
 2b. **Selling pages** (stores, landing pages): write the copy with `copywriting`, tighten with
    `copy-editing`, structure with `site-architecture`, then `cro`, `offers`, `popups`, `signup`,
    `marketing-psychology`. Search: `seo-audit`, `ai-seo`, `schema`. Measurement:
-   `conversion-tracking`, `ab-testing`. Retention: `emails`. Positioning context for all of
+   `conversion-tracking`, `ab-testing`. Retention: `emails`. Final pass on every visible sentence: `humanizer`. Positioning context for all of
    them: `product-marketing` (writes `.agents/product-marketing.md`; do this first).
 3. **Pick the stack** from `references/github-projects.md` (star counts measured 2026-11-15).
    Defaults:

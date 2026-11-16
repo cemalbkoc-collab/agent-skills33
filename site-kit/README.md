@@ -12,6 +12,9 @@ Yeni site, mağaza ya da tanıtım sayfası yaparken kullanılacak beceriler ve 
 | `copywriting`, `copy-editing`, `cro`, `offers`, `popups`, `signup`, `marketing-psychology`, `product-marketing` | Satış metni ve dönüşüm (coreyhaines31/marketingskills) |
 | `seo-audit`, `ai-seo`, `schema`, `site-architecture` | SEO, yapay zekâ aramaları, yapılandırılmış veri, sayfa yapısı |
 | `conversion-tracking`, `ab-testing`, `emails` | Ölçüm, A/B testi, e-posta akışları |
+| `oil-ui` | Üç farklı tasarım yönü üretip yan yana karşılaştırır, gerçek ekran görüntüsüyle inceler |
+| `oil-motion` | Video ya da kare dizilerini kaydırma/fare ile oynayan web animasyonuna çevirir |
+| `humanizer` | Metindeki yapay zekâ izlerini temizler |
 | `../skills/*` | Bu reponun genel becerileri: arayüz, performans, güvenlik, yayın, planlama… |
 
 Kaynaklar ve lisanslar: `VENDORED.md`.
